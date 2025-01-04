@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+  // previewFeatures = ["fullTextSearch", "postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // extensions = [pgvector(map: "vector")]
+}
+
+model Account {
+  id            Int            @id @default(autoincrement()) @map("account_id")
+  fullName      String         @map("full_name")
+  email         String         @unique
+  password      String
+  active        Boolean        @default(true)
+  phone         String?
+  gender        Boolean?
+  birthday      DateTime?      @db.Date
+
+  createdAt               DateTime                  @default(now()) @map("created_at")
+  updatedAt               DateTime                  @updatedAt @map("updated_at")
+
+  @@map("accounts")
+}
