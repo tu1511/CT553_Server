@@ -57,13 +57,13 @@ class AuthService {
 function generateToken(account) {
   const tokens = generatePairTokens({
     id: account.id,
-    role: getRole(account.roleId),
+    // role: getRole(account.roleId),
   });
   return {
     account: {
       ...account,
       password: undefined,
-      role: account.role.role,
+      // role: account.role.role,
     },
     tokens,
   };

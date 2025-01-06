@@ -1,9 +1,8 @@
 const { OKResponse, CreatedResponse } = require("../response/success");
-// const AccountService = require("../services/account");
 const AuthService = require("../services/auth");
+const AccountService = require("./account");
 
 class AuthController {
-
   static async register(req, res) {
     new CreatedResponse({
       message: "Register successfully",
@@ -18,12 +17,11 @@ class AuthController {
     }).send(res);
   }
 
-  // static async getLoggedInAccount(req, res) {
-  //   new OKResponse({
-  //     metadata: await AccountService.getOne(req.account.id),
-  //   }).send(res);
-  // }
-
+  static async getLoggedInAccount(req, res) {
+    new OKResponse({
+      metadata: await AccountService.getOne(req.account.id),
+    }).send(res);
+  }
 }
 
 module.exports = AuthController;
