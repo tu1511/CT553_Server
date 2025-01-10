@@ -9,18 +9,544 @@ datasource db {
   // extensions = [pgvector(map: "vector")]
 }
 
+model UploadedImage {
+  id       Int    @id @default(autoincrement()) @map("image_id")
+  path     String
+  filename String @unique
+
+  account       Account?
+  category      Category?
+  productImages ProductImage[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  // productImageEmbeddings ProductImageEmbeddings?
+  // reviewImage            ReviewImage[]
+  // shopInfo               ShopInfo[]
+  // banner                 Banner[]
+
+  @@map("uploaded_images")
+}
+
 model Account {
   id            Int            @id @default(autoincrement()) @map("account_id")
   fullName      String         @map("full_name")
   email         String         @unique
   password      String
   active        Boolean        @default(true)
+  isGoogleLogin Boolean        @default(false) @map("is_google_login")
   phone         String?
   gender        Boolean?
   birthday      DateTime?      @db.Date
+  avatarId      Int?           @unique @map("avatar_id")
+  avatar        UploadedImage? @relation(fields: [avatarId], references: [id])
 
-  createdAt               DateTime                  @default(now()) @map("created_at")
-  updatedAt               DateTime                  @updatedAt @map("updated_at")
+  roleId Int  @default(3) @map("role_id")
+  role   Role @relation(fields: [roleId], references: [id])
+
+  addresses Address[]
+  // orders           Order[]
+  // collectedCoupons CollectedCoupons[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  // review                  Review[]
+  // ratingRecommendation    RatingRecommendation[]
+  // viewCountRecommendation ViewCountRecommendation[]
 
   @@map("accounts")
 }
+
+model Address {
+  id            Int     @id @default(autoincrement()) @map("address_id")
+  provinceName  String  @map("province_name")
+  provinceId    Int     @map("province_id")
+  districtName  String  @map("district_name")
+  districtId    Int     @map("district_id")
+  wardName      String  @map("ward_name")
+  wardCode      String  @map("ward_code")
+  contactName   String  @map("contact_name")
+  contactPhone  String  @map("contact_phone")
+  detailAddress String  @map("detail_address")
+  isDefault     Boolean @default(false) @map("is_default")
+  isDeleted     Boolean @default(false) @map("is_deleted")
+
+  accountId Int     @map("account_id")
+  account   Account @relation(fields: [accountId], references: [id])
+  // orders    Order[]
+
+  @@map("addresses")
+}
+
+model Role {
+  id       Int       @id @default(autoincrement()) @map("role_id")
+  role     String
+  accounts Account[]
+  // permissions RolePermission[]
+
+  @@map("roles")
+}
+
+// model Permission {
+//   id   Int    @id @default(autoincrement()) @map("permission_id")
+//   name String
+
+//   api      String
+//   method   String
+//   roles    RolePermission[]
+//   moduleId Int
+//   module   Module           @relation(fields: [moduleId], references: [id])
+
+//   @@unique([api, method])
+//   @@map("permissions")
+// }
+
+// model Module {
+//   id   Int    @id @default(autoincrement()) @map("module_id")
+//   name String @unique
+
+//   permissions Permission[]
+
+//   @@map("modules")
+// }
+
+// model RolePermission {
+//   id           Int @id @default(autoincrement()) @map("role_permission_id")
+//   roleId       Int @map("role_id")
+//   permissionId Int @map("permission_id")
+
+//   role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+//   permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+//   @@unique([roleId, permissionId])
+//   @@map("role_permissions")
+// }
+
+model Category {
+  id   Int    @id @default(autoincrement()) @map("category_id")
+  name String
+  slug String @unique
+
+  thumbnailImageId Int           @unique @map("thumbnail_image_id")
+  thumbnailImage   UploadedImage @relation(fields: [thumbnailImageId], references: [id], onDelete: Cascade)
+
+  parentId  Int?              @map("parent_id")
+  parent    Category?         @relation("categoryRelation", fields: [parentId], references: [id], onDelete: Cascade)
+  children  Category[]        @relation("categoryRelation")
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @updatedAt @map("updated_at")
+  products  ProductCategory[]
+
+  @@map("categories")
+}
+
+model ProductImage {
+  id        Int @id @default(autoincrement()) @map("product_image_id")
+  imageId   Int @map("image_id")
+  productId Int @map("product_id")
+
+  image   UploadedImage @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  product Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([imageId, productId])
+  @@map("product_images")
+}
+
+model ProductCategory {
+  id         Int @id @default(autoincrement()) @map("product_category_id")
+  categoryId Int @map("category_id")
+  productId  Int @map("product_id")
+
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, productId])
+  @@map("product_categories")
+}
+
+model Product {
+  id          Int               @id @default(autoincrement()) @map("product_id")
+  name        String
+  visible     Boolean           @default(true)
+  overview    String
+  material    String
+  description String
+  color       String
+  stone       String
+  gender      String
+  completion  String
+  slug        String            @unique
+  soldNumber  Int               @default(0)
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+  // variants      Variant[]
+  images      ProductImage[]
+  categories  ProductCategory[]
+
+  // reviews Review[]
+
+  // thumbnailImageId Int           @unique @map("thumbnail_image_id")
+  // thumbnailImage   UploadedImage @relation("ThumbnailImage", fields: [thumbnailImageId], references: [id], onDelete: Cascade)
+
+  // viewImageId Int?           @unique @map("view_image_id")
+  // viewImage   UploadedImage? @relation("ViewImage", fields: [viewImageId], references: [id], onDelete: Cascade)
+
+  productDiscount ProductDiscount[]
+  // productImageEmbeddings ProductImageEmbeddings[]
+
+  // productEmbedding        ProductEmbeddings?
+  // ratingRecommendation    RatingRecommendation[]
+  // viewCountRecommendation ViewCountRecommendation[]
+
+  @@map("products")
+}
+
+// model Variant {
+//   id        Int    @id @default(autoincrement()) @map("variant_id")
+//   price     Float
+//   size      String
+//   quantity  Int
+//   productId Int    @map("product_id")
+
+//   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+//   createdAt   DateTime      @default(now()) @map("created_at")
+//   updatedAt   DateTime      @updatedAt @map("updated_at")
+//   orderDetail OrderDetail[]
+
+//   @@map("variants")
+// }
+
+// model PaymentMethod {
+//   id   Int    @id @default(autoincrement()) @map("payment_method_id")
+//   name String
+
+//   payments Payment[]
+
+//   @@map("payment_methods")
+// }
+
+// model PaymentStatus {
+//   id   Int    @id @default(autoincrement()) @map("payment_status_id")
+//   name String
+
+//   payments Payment[]
+
+//   @@map("payment_statuses")
+// }
+
+// model Payment {
+//   id              Int   @id @default(autoincrement()) @map("payment_id")
+//   amount          Float
+//   paymentStatusId Int   @map("payment_status_id")
+//   paymentMethodId Int   @map("payment_method_id")
+//   orderId         Int   @unique @map("order_id")
+
+//   paymentMethod PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+//   paymentStatus PaymentStatus @relation(fields: [paymentStatusId], references: [id])
+//   order         Order         @relation(fields: [orderId], references: [id])
+
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+
+//   @@map("payments")
+// }
+
+// model OrderStatus {
+//   id   Int    @id @default(autoincrement()) @map("order_status_id")
+//   name String
+
+//   orders        Order[]
+//   orderTracking OrderTracking[]
+
+//   @@map("order_statuses")
+// }
+
+// model Order {
+//   id                Int   @id @default(autoincrement()) @map("order_id")
+//   totalPrice        Float @map("total_price")
+//   totalDiscount     Float @map("total_discount")
+//   finalPrice        Float @map("final_price")
+//   shippingFee       Float @map("shipping_fee")
+//   buyerId           Int   @map("buyer_id")
+//   deliveryAddressId Int   @map("delivery_address_id")
+//   currentStatusId   Int   @map("current_status_id")
+
+//   buyer           Account         @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+//   currentStatus   OrderStatus     @relation(fields: [currentStatusId], references: [id])
+//   deliveryAddress Address         @relation(fields: [deliveryAddressId], references: [id])
+//   payment         Payment?
+//   orderTracking   OrderTracking[]
+//   orderDetail     OrderDetail[]
+//   usedCouponId    Int?            @map("used_coupon_id")
+//   usedCoupon      Coupon?         @relation(fields: [usedCouponId], references: [id])
+
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+
+//   @@map("orders")
+// }
+
+// model OrderTracking {
+//   id            Int       @id @default(autoincrement()) @map("order_tracking_id")
+//   orderId       Int       @map("order_id")
+//   orderStatusId Int       @map("order_status_id")
+//   beginAt       DateTime  @default(now()) @map("begin_at")
+//   finishAt      DateTime? @map("finish_at")
+
+//   order       Order       @relation(fields: [orderId], references: [id])
+//   orderStatus OrderStatus @relation(fields: [orderStatusId], references: [id])
+
+//   @@unique([orderId, orderStatusId])
+//   @@map("order_trackings")
+// }
+
+// model OrderDetail {
+//   orderId   Int   @map("order_id")
+//   variantId Int   @map("variant_id")
+//   quantity  Int
+//   price     Float
+//   discount  Float @default(0)
+
+//   order   Order   @relation(fields: [orderId], references: [id])
+//   variant Variant @relation(fields: [variantId], references: [id])
+
+//   review Review[]
+
+//   @@id([orderId, variantId])
+//   @@map("order_details")
+// }
+
+// model Review {
+//   id      Int    @id @default(autoincrement()) @map("review_id")
+//   rating  Float?
+//   comment String
+
+//   orderId   Int      @map("order_id")
+//   variantId Int      @map("variant_id")
+//   accountId Int      @map("account_id")
+//   productId Int      @map("product_id")
+//   visible   Boolean  @default(true)
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+
+//   orderDetail OrderDetail   @relation(fields: [orderId, variantId], references: [orderId, variantId])
+//   account     Account       @relation(fields: [accountId], references: [id])
+//   product     Product       @relation(fields: [productId], references: [id])
+//   reviewImage ReviewImage[]
+
+//   replyToReviewId Int?    @map("reply_to_review_id")
+//   replyToReview   Review? @relation("reviewRelation", fields: [replyToReviewId], references: [id])
+
+//   replyByReview Review[] @relation("reviewRelation")
+
+//   @@map("reviews")
+// }
+
+// model ReviewImage {
+//   id       Int @id @default(autoincrement()) @map("product_image_id")
+//   imageId  Int @map("image_id")
+//   reviewId Int @map("review_id")
+
+//   image  UploadedImage @relation(fields: [imageId], references: [id], onDelete: Cascade)
+//   review Review        @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+//   @@unique([imageId, reviewId])
+//   @@map("review_images")
+// }
+
+// model Coupon {
+//   id                Int      @id @default(autoincrement()) @map("coupon_id")
+//   code              String   @unique
+//   discountType      String
+//   discountValue     Float
+//   startDate         DateTime @map("start_date")
+//   endDate           DateTime @map("end_date")
+//   quantity          Int
+//   visible           Boolean  @default(true)
+//   collectedQuantity Int      @default(0) @map("collected_quantity")
+//   currentUse        Int      @default(0) @map("current_use")
+//   minimumPriceToUse Float    @map("minumin_price_to_use")
+
+//   accountsCollected CollectedCoupons[]
+//   ordersUsed        Order[]
+
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+
+//   @@map("coupons")
+// }
+
+// model CollectedCoupons {
+//   accountId Int     @map("account_id")
+//   couponId  Int     @map("coupon_id")
+//   used      Boolean @default(false)
+
+//   account Account @relation(fields: [accountId], references: [id])
+//   coupon  Coupon  @relation(fields: [couponId], references: [id])
+
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+
+//   @@id([accountId, couponId])
+//   @@map("account_coupons")
+// }
+
+model ProductDiscount {
+  id            Int      @id @default(autoincrement()) @map("product_discount_id")
+  productId     Int      @map("product_id")
+  discountType  String   @map("discount_type")
+  discountValue Float    @map("discount_value")
+  startDate     DateTime @map("start_date")
+  endDate       DateTime @map("end_date")
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("product_discounts")
+}
+
+// model ProductEmbeddings {
+//   id        Int                   @id @default(autoincrement()) @map("product_embedding_id")
+//   productId Int                   @unique @map("product_id")
+//   embedding Unsupported("vector")
+
+//   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+//   @@map("product_embeddings")
+// }
+
+// model ProductImageEmbeddings {
+//   id Int @id @default(autoincrement()) @map("product_image_embedding_id")
+
+//   productId Int                   @map("product_id")
+//   imageId   Int                   @unique @map("image_id")
+//   embedding Unsupported("vector")
+
+//   product Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+//   image   UploadedImage @relation(fields: [imageId], references: [id], onDelete: Cascade)
+
+//   @@map("product_image_embeddings")
+// }
+
+model PaymentPolicy {
+  id        Int      @id @default(autoincrement()) @map("payment_policy_id")
+  content   String
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("payment_policies")
+}
+
+model DeliveryPolicy {
+  id        Int      @id @default(autoincrement()) @map("delivery_policy_id")
+  content   String
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("delivery_policies")
+}
+
+model ReturnPolicy {
+  id        Int      @id @default(autoincrement()) @map("return_policy_id")
+  content   String
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("return_policies")
+}
+
+model WarrantyPolicy {
+  id        Int      @id @default(autoincrement()) @map("warranty_policy_id")
+  content   String
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("warranty_policies")
+}
+
+// model BannerCategory {
+//   id        Int      @id @default(autoincrement()) @map("banner_category_id")
+//   name      String   @unique
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+//   banner    Banner[]
+
+//   @@map("banner_categories")
+// }
+
+// model Banner {
+//   id               Int            @id @default(autoincrement()) @map("banner_id")
+//   imageId          Int            @map("image_id")
+//   name             String
+//   bannerCategoryId Int            @map("banner_category_id")
+//   bannerCategory   BannerCategory @relation(fields: [bannerCategoryId], references: [id])
+//   priority         Int            @default(0)
+//   visible          Boolean        @default(true)
+//   createdAt        DateTime       @default(now()) @map("created_at")
+//   updatedAt        DateTime       @updatedAt @map("updated_at")
+//   image            UploadedImage  @relation(fields: [imageId], references: [id], onDelete: Cascade)
+
+//   @@unique([bannerCategoryId, priority])
+//   @@map("banners")
+// }
+
+// model ShopInfo {
+//   id                 Int     @id @default(autoincrement()) @map("shop_info_id")
+//   name               String
+//   fullName           String  @map("full_name")
+//   logoId             Int     @map("logo_id")
+//   phone              String
+//   email              String
+//   businessCode       String  @map("business_code")
+//   workingTime        String  @map("working_time")
+//   isMaintaining      Boolean @default(false) @map("is_maintaining")
+//   maintainingMessage String? @map("maintaining_message")
+//   slogan             String?
+
+//   // address
+//   provinceName  String @map("province_name")
+//   provinceId    Int    @map("province_id")
+//   districtName  String @map("district_name")
+//   districtId    Int    @map("district_id")
+//   wardName      String @map("ward_name")
+//   wardCode      String @map("ward_code")
+//   detailAddress String @map("detail_address")
+
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+
+//   logo UploadedImage @relation(fields: [logoId], references: [id], onDelete: Cascade)
+
+//   @@map("shop_infos")
+// }
+
+// model RatingRecommendation {
+//   id        Int   @id @default(autoincrement()) @map("rating_recommendation_id")
+//   accountId Int   @map("account_id")
+//   productId Int   @map("product_id")
+//   rating    Float
+
+//   count Int @default(0)
+
+//   user    Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+//   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+//   @@map("rating_recommendations")
+// }
+
+// model ViewCountRecommendation {
+//   id        Int @id @default(autoincrement()) @map("view_count_recommendation_id")
+//   accountId Int @map("account_id")
+//   productId Int @map("product_id")
+
+//   count Int
+
+//   user    Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+//   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+//   @@map("view_count_recommendations")
+// }

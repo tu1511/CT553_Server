@@ -13,6 +13,7 @@ class AuthService {
     phone,
     gender,
     birthday,
+    avatarId,
   }) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newAccount = await prisma.account.create({
@@ -23,6 +24,7 @@ class AuthService {
         phone,
         gender,
         birthday,
+        avatarId: +avatarId,
       },
     });
 
@@ -34,11 +36,11 @@ class AuthService {
   static async login({ email, password }) {
     const account = await prisma.account.findUnique({
       where: { email },
-      // include: {
-      //   role: {
-      //     select: { role: true },
-      //   },
-      // },
+      include: {
+        role: {
+          select: { role: true },
+        },
+      },
     });
 
     if (!account) throw new BadRequest("Invalid credentials");
@@ -57,13 +59,13 @@ class AuthService {
 function generateToken(account) {
   const tokens = generatePairTokens({
     id: account.id,
-    // role: getRole(account.roleId),
+    role: getRole(account.roleId),
   });
   return {
     account: {
       ...account,
       password: undefined,
-      // role: account.role.role,
+      role: account.role.role,
     },
     tokens,
   };
