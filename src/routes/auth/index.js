@@ -36,10 +36,4 @@ router.post(
   asyncHandler(AuthController.login)
 );
 
-router.get(
-  "/logged-in-account",
-  authentication,
-  AuthController.getLoggedInAccount
-);
-
 module.exports = router;

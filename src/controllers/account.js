@@ -2,10 +2,9 @@ const { CreatedResponse, OKResponse } = require("../response/success");
 const AccountService = require("../services/account");
 
 class AccountController {
-  static async getOne(req, res) {
+  static async getLoggedInAccount(req, res) {
     new OKResponse({
-      message: "Get account successfully",
-      metadata: await AccountService.getOne(req.params.id),
+      metadata: await AccountService.getOne(req.account.id),
     }).send(res);
   }
 
@@ -18,6 +17,13 @@ class AccountController {
         +req.account.id,
         req.body
       ),
+    }).send(res);
+  }
+
+  static async changePassword(req, res) {
+    new OKResponse({
+      message: "Change password successfully",
+      metadata: await AccountService.changePassword(+req.account.id, req.body),
     }).send(res);
   }
 }
