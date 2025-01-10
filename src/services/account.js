@@ -12,5 +12,18 @@ class AccountService {
       updatedAt: undefined,
     };
   }
+
+  static async updateInformation(accountId, updateData) {
+    if (updateData.birthday) {
+      updateData.birthday = new Date(updateData.birthday).toISOString();
+    }
+    const updateAccount = await prisma.account.update({
+      where: { id: accountId },
+      data: updateData,
+    });
+
+    delete updateAccount.password;
+    return updateAccount;
+  }
 }
 module.exports = AccountService;

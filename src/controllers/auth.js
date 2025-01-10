@@ -1,6 +1,6 @@
 const { OKResponse, CreatedResponse } = require("../response/success");
 const AuthService = require("../services/auth");
-const AccountService = require("./account");
+const AccountService = require("../services/account");
 
 class AuthController {
   static async register(req, res) {

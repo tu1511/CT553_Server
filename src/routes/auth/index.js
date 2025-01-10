@@ -3,10 +3,10 @@ const router = require("express").Router();
 const { body } = require("express-validator");
 const { validate, uniqueEmail } = require("../../middlewares/validation");
 const { asyncHandler } = require("../../middlewares/asyncHandler");
-const { authentication, permission } = require("../../middlewares/auth");
+const { authentication } = require("../../middlewares/auth");
 const { ADMIN, EMPLOYEE } = require("../../constant/roles");
 
-// router.use(authentication);  
+// router.use(authentication);
 
 router.post(
   "/register",
@@ -36,9 +36,10 @@ router.post(
   asyncHandler(AuthController.login)
 );
 
-// router.get(
-//   "/logged-in-account",
-//   AuthController.getLoggedInAccount
-// );
+router.get(
+  "/logged-in-account",
+  authentication,
+  AuthController.getLoggedInAccount
+);
 
 module.exports = router;

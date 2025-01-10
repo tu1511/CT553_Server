@@ -24,6 +24,14 @@ const existAccount = async (accountId) => {
   if (!foundAccount) throw new BadRequest("Account not found");
 };
 
+const convertDateStringToISODate = (value) => {
+  if (!value) return true;
+  if (isNaN(Date.parse(value))) {
+    throw new BadRequest("Invalid date format");
+  }
+  return true;
+};
+
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -36,4 +44,5 @@ module.exports = {
   validate,
   uniqueEmail,
   existAccount,
+  convertDateStringToISODate,
 };
