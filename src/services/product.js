@@ -14,7 +14,7 @@ const {
 //   generateEmbeddingsFromTextV2,
 //   generateEmbeddingsFromImageUrl,
 // } = require("../utils/generateEmbeddings");
-// const { getUploadedImageId, getUploadedImageIds } = require("../utils");
+const { getUploadedImageId, getUploadedImageIds } = require("../utils");
 const { Prisma } = require("@prisma/client");
 // const {
 //   getQueryObjectBasedOnFilters,
@@ -85,23 +85,26 @@ class ProductService {
         data: {
           name: productData.name,
           overview: productData.overview,
-          specification: productData.specification,
+          description: productData.description,
           material: productData.material,
-          instruction: productData.instruction,
+          color: productData.color,
+          stone: productData.stone,
+          gender: productData.gender,
+          completionTime: productData.completionTime,
           thumbnailImageId,
           viewImageId,
           slug: slugify(productData.name, { lower: true }),
         },
       });
 
-      await tx.variant.createMany({
-        data: productData.variants.map((variant) => ({
-          size: variant.size,
-          price: variant.price,
-          quantity: 10,
-          productId: createdProduct.id,
-        })),
-      });
+      // await tx.variant.createMany({
+      //   data: productData.variants.map((variant) => ({
+      //     size: variant.size,
+      //     price: variant.price,
+      //     quantity: 10,
+      //     productId: createdProduct.id,
+      //   })),
+      // });
 
       await tx.productImage.createMany({
         data: uploadedImageIds.map((uploadedImageId) => ({
@@ -121,7 +124,7 @@ class ProductService {
     });
 
     // create embeddings
-    await ProductService.createEmbeddingsForProduct(newProduct.id);
+    // await ProductService.createEmbeddingsForProduct(newProduct.id);
 
     return newProduct;
   }
@@ -142,7 +145,7 @@ class ProductService {
   static async create({
     uploadedImageIds,
     categoryIds,
-    variants,
+    // variants,
     discounts,
     ...data
   }) {
@@ -153,14 +156,14 @@ class ProductService {
         },
       });
 
-      await tx.variant.createMany({
-        data: variants.map((variant) => ({
-          size: variant.size,
-          price: +variant.price,
-          quantity: +variant.quantity,
-          productId: createdProduct.id,
-        })),
-      });
+      // await tx.variant.createMany({
+      //   data: variants.map((variant) => ({
+      //     size: variant.size,
+      //     price: +variant.price,
+      //     quantity: +variant.quantity,
+      //     productId: createdProduct.id,
+      //   })),
+      // });
 
       await tx.productDiscount.createMany({
         data: discounts.map((discount) => ({
@@ -190,7 +193,7 @@ class ProductService {
     });
 
     // create embeddings
-    await ProductService.createEmbeddingsForProduct(newProduct.id);
+    // await ProductService.createEmbeddingsForProduct(newProduct.id);
 
     return newProduct;
   }
