@@ -26,6 +26,13 @@ class AccountController {
       metadata: await AccountService.changePassword(+req.account.id, req.body),
     }).send(res);
   }
+
+  static async toggleActiveAccount(req, res) {
+    new CreatedResponse({
+      message: "Toggle active successfully",
+      metadata: await AccountService.toggleActive(req.params.accountId),
+    }).send(res);
+  }
 }
 
 module.exports = AccountController;

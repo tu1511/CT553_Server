@@ -6,6 +6,9 @@ class AccountService {
   static async getOne(accountId) {
     const account = await prisma.account.findUnique({
       where: { id: accountId },
+      include: {
+        avatar: true,
+      },
     });
     return {
       ...account,
@@ -22,6 +25,9 @@ class AccountService {
     const updateAccount = await prisma.account.update({
       where: { id: accountId },
       data: updateData,
+      include: {
+        avatar: true,
+      },
     });
 
     delete updateAccount.password;
@@ -43,6 +49,23 @@ class AccountService {
     const updateAccount = await prisma.account.update({
       where: { id: accountId },
       data: { password: hashedPassword },
+      include: {
+        avatar: true,
+      },
+    });
+
+    return updateAccount;
+  }
+
+  static async toggleActive(accountId) {
+    const account = await prisma.account.findUnique({
+      where: { id: +accountId },
+      select: { active: true },
+    });
+
+    const updateAccount = await prisma.account.update({
+      where: { id: +accountId },
+      data: { active: !account.active },
     });
 
     return updateAccount;

@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { body } = require("express-validator");
+const { body, param } = require("express-validator");
 const {
   validate,
   uniqueEmail,
@@ -25,5 +25,12 @@ router.put(
 );
 
 router.put("/password", asyncHandler(AccountController.changePassword));
+
+router.put(
+  "/toggle-active/:accountId",
+  param("accountId").notEmpty().withMessage("Account ID is required"),
+  validate,
+  asyncHandler(AccountController.toggleActiveAccount)
+);
 
 module.exports = router;
