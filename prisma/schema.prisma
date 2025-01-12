@@ -179,7 +179,7 @@ model Product {
   soldNumber  Int               @default(0)
   createdAt   DateTime          @default(now()) @map("created_at")
   updatedAt   DateTime          @updatedAt @map("updated_at")
-  // variants      Variant[]
+  variants    Variant[]
   images      ProductImage[]
   categories  ProductCategory[]
 
@@ -201,21 +201,21 @@ model Product {
   @@map("products")
 }
 
-// model Variant {
-//   id        Int    @id @default(autoincrement()) @map("variant_id")
-//   price     Float
-//   size      String
-//   quantity  Int
-//   productId Int    @map("product_id")
+model Variant {
+  id        Int    @id @default(autoincrement()) @map("variant_id")
+  price     Float
+  size      String
+  quantity  Int
+  productId Int    @map("product_id")
 
-//   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-//   createdAt   DateTime      @default(now()) @map("created_at")
-//   updatedAt   DateTime      @updatedAt @map("updated_at")
-//   orderDetail OrderDetail[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  // orderDetail OrderDetail[]
 
-//   @@map("variants")
-// }
+  @@map("variants")
+}
 
 // model PaymentMethod {
 //   id   Int    @id @default(autoincrement()) @map("payment_method_id")

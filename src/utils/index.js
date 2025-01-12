@@ -49,49 +49,65 @@ const changeImageUrlToFile = async (imgUrl) => {
     type: blob.type,
   });
   return file;
-}
+};
 
 const getUploadedImageId = async (imageUrl) => {
   const form = new FormData();
   const file = await changeImageUrlToFile(imageUrl);
   form.append("image", file);
 
-  const uploadedImageId = await fetch(`http://localhost:5000/api/upload/image`, {
-    method: "POST",
-    body: form
-  }).then(function (a) {
-    return a.json(); // call the json method on the response to get JSON
-  }).then(function (res) {
-    const uploadedImageId = res.metadata.id;
-    return uploadedImageId;
-  });
+  const uploadedImageId = await fetch(
+    `http://localhost:5000/api/v1/upload/image`,
+    {
+      method: "POST",
+      body: form,
+    }
+  )
+    .then(function (a) {
+      return a.json(); // call the json method on the response to get JSON
+    })
+    .then(function (res) {
+      const uploadedImageId = res.metadata.id;
+      return uploadedImageId;
+    });
   return uploadedImageId;
-}
+};
 
 const getUploadedImageIds = async (imageUrls) => {
   const form = new FormData();
-  await Promise.all(imageUrls.map(async (image) => {
-    const file = await changeImageUrlToFile(image);
-    form.append("images", file);
-  }));
+  await Promise.all(
+    imageUrls.map(async (image) => {
+      const file = await changeImageUrlToFile(image);
+      form.append("images", file);
+    })
+  );
 
-  const uploadedImageIds = await fetch(`http://localhost:5000/api/upload/images`, {
-    method: "POST",
-    body: form
-  }).then(function (a) {
-    return a.json(); // call the json method on the response to get JSON
-  }).then(function (res) {
-    const uploadedImageIds = res.metadata.map((image) => image.id);
-    return uploadedImageIds;
-  });
+  console.log("form", form);
+
+  const uploadedImageIds = await fetch(
+    `http://localhost:5000/api/v1/upload/images`,
+    {
+      method: "POST",
+      body: form,
+    }
+  )
+    .then(function (a) {
+      return a.json(); // call the json method on the response to get JSON
+    })
+    .then(function (res) {
+      console.log("res", res);
+      const uploadedImageIds = res.metadata.map((image) => image.id);
+      return uploadedImageIds;
+    });
   return uploadedImageIds;
-}
+};
 
 const formatCurrency = (value) =>
-  new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+  new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+    value
+  );
 
-const formatSlugify = (value) =>
-  slugify(value, { lower: true, locale: 'vi' });
+const formatSlugify = (value) => slugify(value, { lower: true, locale: "vi" });
 
 module.exports = {
   sortObject,

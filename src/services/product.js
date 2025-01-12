@@ -56,19 +56,19 @@ class ProductService {
     console.log("categories", categories);
 
     // upload thumbnail image
-    const thumbnailImageId = await getUploadedImageId(
-      productData.thumbnailImage
-    );
-    console.log("thumbnailImageId", thumbnailImageId);
+    // const thumbnailImageId = await getUploadedImageId(
+    //   productData.thumbnailImage
+    // );
+    // console.log("thumbnailImageId", thumbnailImageId);
 
     // upload view image
-    let viewImageId;
-    if (productData.viewImage) {
-      viewImageId = await getUploadedImageId(productData.viewImage);
-      console.log("viewImageId", viewImageId);
-    } else {
-      console.log("No view image " + productData.name);
-    }
+    // let viewImageId;
+    // if (productData.viewImage) {
+    //   viewImageId = await getUploadedImageId(productData.viewImage);
+    //   console.log("viewImageId", viewImageId);
+    // } else {
+    //   console.log("No view image " + productData.name);
+    // }
 
     // upload images
     let uploadedImageIds = [];
@@ -90,21 +90,21 @@ class ProductService {
           color: productData.color,
           stone: productData.stone,
           gender: productData.gender,
-          completionTime: productData.completionTime,
-          thumbnailImageId,
-          viewImageId,
+          completion: productData.completion,
+          // thumbnailImageId,
+          // viewImageId,
           slug: slugify(productData.name, { lower: true }),
         },
       });
 
-      // await tx.variant.createMany({
-      //   data: productData.variants.map((variant) => ({
-      //     size: variant.size,
-      //     price: variant.price,
-      //     quantity: 10,
-      //     productId: createdProduct.id,
-      //   })),
-      // });
+      await tx.variant.createMany({
+        data: productData.variants.map((variant) => ({
+          size: variant.size,
+          price: variant.price,
+          quantity: 10,
+          productId: createdProduct.id,
+        })),
+      });
 
       await tx.productImage.createMany({
         data: uploadedImageIds.map((uploadedImageId) => ({
@@ -156,14 +156,14 @@ class ProductService {
         },
       });
 
-      // await tx.variant.createMany({
-      //   data: variants.map((variant) => ({
-      //     size: variant.size,
-      //     price: +variant.price,
-      //     quantity: +variant.quantity,
-      //     productId: createdProduct.id,
-      //   })),
-      // });
+      await tx.variant.createMany({
+        data: variants.map((variant) => ({
+          size: variant.size,
+          price: +variant.price,
+          quantity: +variant.quantity,
+          productId: createdProduct.id,
+        })),
+      });
 
       await tx.productDiscount.createMany({
         data: discounts.map((discount) => ({

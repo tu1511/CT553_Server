@@ -114,10 +114,9 @@ router.post(
   "",
   // permission([ADMIN, EMPLOYEE]),
   body("name").notEmpty().withMessage("Name is missing"),
-  body("specification").notEmpty().withMessage("Specification is missing"),
+  body("description").notEmpty().withMessage("Description is missing"),
   body("material").notEmpty().withMessage("Material is missing"),
   body("overview").notEmpty().withMessage("Overview is missing"),
-  body("instruction").notEmpty().withMessage("Instruction is missing"),
   body("categoryIds")
     .isArray()
     .withMessage("CategoryIds should be an array")
