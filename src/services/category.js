@@ -21,7 +21,7 @@ class CategoryService {
             parent: {
               select: {
                 slug: true,
-              }
+              },
             },
             thumbnailImage: true,
           },
@@ -36,8 +36,13 @@ class CategoryService {
     });
   }
 
-  static async getAllForAdmin({ categorySearch, isRootCategory, limit, page, sortBy }) {
-
+  static async getAllForAdmin({
+    categorySearch,
+    isRootCategory,
+    limit,
+    page,
+    sortBy,
+  }) {
     let query = {
       include: {
         children: {
@@ -45,7 +50,7 @@ class CategoryService {
             parent: {
               select: {
                 slug: true,
-              }
+              },
             },
             thumbnailImage: true,
           },
@@ -58,8 +63,8 @@ class CategoryService {
         thumbnailImage: true,
       },
       orderBy: {
-        createdAt: "desc"
-      }
+        createdAt: "desc",
+      },
     };
 
     // get all root categories
@@ -83,7 +88,9 @@ class CategoryService {
       if (!isNaN(categorySearch)) {
         arr = arr.filter((category) => category.id === +categorySearch);
       } else {
-        arr = arr.filter((category) => category.name.toLowerCase().includes(categorySearch.toLowerCase()));
+        arr = arr.filter((category) =>
+          category.name.toLowerCase().includes(categorySearch.toLowerCase())
+        );
       }
     }
 
@@ -121,11 +128,12 @@ class CategoryService {
     let categories = arr.slice(offset, offset + limit);
 
     return {
-      categories, pagination: {
+      categories,
+      pagination: {
         totalCategories: count,
-        totalPages
-      }
-    }
+        totalPages,
+      },
+    };
   }
 
   static async getOne(categoryId) {
@@ -137,8 +145,8 @@ class CategoryService {
             children: true,
             thumbnailImage: true,
           },
-        }
-      }
+        },
+      },
     });
   }
 
@@ -155,7 +163,7 @@ class CategoryService {
       },
       include: {
         parent: true,
-      }
+      },
     });
     while (result.parentId) {
       result = await prisma.category.findUnique({
@@ -164,7 +172,7 @@ class CategoryService {
         },
         include: {
           parent: true,
-        }
+        },
       });
     }
     return result;
@@ -183,7 +191,7 @@ class CategoryService {
           },
         },
         thumbnailImage: true,
-      }
+      },
     });
     while (category.parentId) {
       category = await prisma.category.findUnique({
@@ -198,7 +206,7 @@ class CategoryService {
             },
           },
           thumbnailImage: true,
-        }
+        },
       });
     }
     let res = [];

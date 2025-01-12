@@ -96,11 +96,13 @@ const getProduct = async (url) => {
     }
   });
 
+  await browser.close();
+
   return jewelryData;
 };
 
 const getAllProductLinks = async (url) => {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   await page.goto(url, { timeout: 0 });
   console.log("Get all product links");
@@ -115,6 +117,8 @@ const getAllProductLinks = async (url) => {
       links.push(link);
     }
   );
+  await browser.close();
+  links = links.slice(10, 16);
   console.log("links", links);
   return links;
 };
