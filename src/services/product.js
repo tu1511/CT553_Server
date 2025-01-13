@@ -145,7 +145,7 @@ class ProductService {
   static async create({
     uploadedImageIds,
     categoryIds,
-    // variants,
+    variants,
     discounts,
     ...data
   }) {

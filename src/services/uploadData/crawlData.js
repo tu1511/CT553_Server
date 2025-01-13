@@ -64,8 +64,9 @@ const getProduct = async (url) => {
   jewelryData.variants = variants;
 
   // get description
+  // chu y elementor-element-666b9ac0
   jewelryData.description = $(
-    "div > section.elementor-section.elementor-top-section.elementor-element.elementor-element-1f96e88.elementor-section-boxed.elementor-section-height-default.elementor-section-height-default > div > div > div > div"
+    "div > section.elementor-section.elementor-top-section.elementor-element.elementor-element-666b9ac0.elementor-section-boxed.elementor-section-height-default.elementor-section-height-default > div > div > div > div"
   )
     .html()
     ?.trim();
@@ -73,10 +74,12 @@ const getProduct = async (url) => {
   jewelryData.overview = $("div.product-short-description > p").text().trim();
 
   // get thumbnail image and images
-  let tempArray = [];
-  tempArray = $("div.woocommerce-product-gallery__image.slide")
+  let tempArray = $("div.woocommerce-product-gallery__image.slide")
     .map((i, element) => $(element).attr("data-thumb"))
-    .get();
+    .get()
+    .map((url) => url.replace(/-150x150/, "-400x400"));
+
+  console.log("tempArray", tempArray);
   jewelryData.images = tempArray;
 
   // get category, stone, color, gender, material, completion
