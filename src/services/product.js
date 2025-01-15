@@ -16,11 +16,11 @@ const {
 // } = require("../utils/generateEmbeddings");
 const { getUploadedImageId, getUploadedImageIds } = require("../utils");
 const { Prisma } = require("@prisma/client");
-// const {
-//   getQueryObjectBasedOnFilters,
-//   commonIncludeOptionsInProduct,
-//   commonIncludeOptionsInProductAdmin,
-// } = require("../utils/product");
+const {
+  getQueryObjectBasedOnFilters,
+  commonIncludeOptionsInProduct,
+  commonIncludeOptionsInProductAdmin,
+} = require("../utils/product");
 const { getProduct, getAllProductLinks } = require("./uploadData/crawlData");
 // const RecommendService = require("./recommend");
 

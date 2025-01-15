@@ -20,12 +20,12 @@ const commonIncludeOptionsInProduct = {
       category: {
         include: {
           parent: true,
-        }
+        },
       },
-    }
+    },
   },
-  thumbnailImage: true,
-  viewImage: true,
+  // thumbnailImage: true,
+  // viewImage: true,
   variants: true,
   productDiscount: {
     where: {
@@ -39,12 +39,12 @@ const commonIncludeOptionsInProduct = {
   },
   // do not show invisible reviews
   // hide invisible reviews
-  reviews: {
-    where: {
-      visible: true,
-    },
-    include: commonIncludeOptionsInReview
-  },
+  // reviews: {
+  // where: {
+  // visible: true,
+  //  },
+  // include: commonIncludeOptionsInReview,
+  //  },
 };
 
 const commonIncludeOptionsInProductAdmin = {
@@ -58,21 +58,30 @@ const commonIncludeOptionsInProductAdmin = {
       category: {
         include: {
           parent: true,
-        }
+        },
       },
-    }
+    },
   },
   thumbnailImage: true,
   viewImage: true,
   variants: true,
   productDiscount: true,
   reviews: {
-    include: commonIncludeOptionsInReview
+    include: commonIncludeOptionsInReview,
   },
 };
 
 const getQueryObjectBasedOnFilters = async (currentQueryObject, filters) => {
-  const { productIds, categoryIds, type, discount, visible, filterMinPrice, filterMaxPrice, sortBy } = filters;
+  const {
+    productIds,
+    categoryIds,
+    type,
+    discount,
+    visible,
+    filterMinPrice,
+    filterMaxPrice,
+    sortBy,
+  } = filters;
   const queryObject = { ...currentQueryObject };
 
   if (categoryIds.length > 0) {
@@ -91,9 +100,9 @@ const getQueryObjectBasedOnFilters = async (currentQueryObject, filters) => {
             id: {
               in: recursiveCategoryIds,
             },
-          }
-        }
-      }
+          },
+        },
+      },
     };
   }
 
@@ -119,10 +128,10 @@ const getQueryObjectBasedOnFilters = async (currentQueryObject, filters) => {
           price: {
             gte: filterMinPrice,
             lte: filterMaxPrice,
-          }
-        }
+          },
+        },
       },
-    }
+    };
   }
 
   if (sortBy?.field === "createdAt") {
@@ -207,7 +216,11 @@ const getQueryObjectBasedOnFilters = async (currentQueryObject, filters) => {
 };
 
 const getQueryFullTextSearch = (currentQueryObject, query) => {
-  const searchText = query.trim().replace(/ {2,}/g, " ").toLowerCase().replace(/ /g, " & ");
+  const searchText = query
+    .trim()
+    .replace(/ {2,}/g, " ")
+    .toLowerCase()
+    .replace(/ /g, " & ");
 
   let queryObject = { ...currentQueryObject };
   queryObject.where = {
@@ -216,8 +229,13 @@ const getQueryFullTextSearch = (currentQueryObject, query) => {
       search: searchText,
     },
   };
-  queryObject.include = commonIncludeOptionsInProduct
+  queryObject.include = commonIncludeOptionsInProduct;
   return queryObject;
 };
 
-module.exports = { getQueryObjectBasedOnFilters, getQueryFullTextSearch, commonIncludeOptionsInProduct, commonIncludeOptionsInProductAdmin };
+module.exports = {
+  getQueryObjectBasedOnFilters,
+  getQueryFullTextSearch,
+  commonIncludeOptionsInProduct,
+  commonIncludeOptionsInProductAdmin,
+};
