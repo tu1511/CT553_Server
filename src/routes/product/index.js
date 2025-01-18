@@ -81,7 +81,6 @@ router.get(
   "/related/:id",
   asyncHandler(ProductController.getRelatedProductsBasedOnText)
 );
-// huh
 
 router.get(
   "/recommend",
