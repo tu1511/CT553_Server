@@ -153,6 +153,14 @@ class CategoryService {
   static async getOneBySlug(slug) {
     return await prisma.category.findFirst({
       where: { slug: slug },
+      include: {
+        children: {
+          include: {
+            children: true,
+            thumbnailImage: true,
+          },
+        },
+      },
     });
   }
 

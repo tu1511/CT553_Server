@@ -33,6 +33,12 @@ class CategoryController {
     }).send(res);
   }
 
+  static async getOneBySlug(req, res) {
+    new OKResponse({
+      metadata: await CategoryService.getOneBySlug(req.params.categorySlug),
+    }).send(res);
+  }
+
   static async getRootParent(req, res) {
     new OKResponse({
       metadata: await CategoryService.getRootParent(+req.params.categoryId),
