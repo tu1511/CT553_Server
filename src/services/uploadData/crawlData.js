@@ -66,7 +66,7 @@ const getProduct = async (url) => {
   // get description
   // chu y elementor-element-666b9ac0
   jewelryData.description = $(
-    "div > section.elementor-section.elementor-top-section.elementor-element.elementor-element-666b9ac0.elementor-section-boxed.elementor-section-height-default.elementor-section-height-default > div > div > div > div"
+    "div > section.elementor-section.elementor-top-section.elementor-element.elementor-element-1f96e88.elementor-section-boxed.elementor-section-height-default.elementor-section-height-default > div > div > div > div"
   )
     .html()
     ?.trim();
@@ -77,7 +77,7 @@ const getProduct = async (url) => {
   let tempArray = $("div.woocommerce-product-gallery__image.slide")
     .map((i, element) => $(element).attr("data-thumb"))
     .get()
-    .map((url) => url.replace(/-150x150/, "-400x400"));
+    .map((url) => url.replace(/-150x150/, "-768x768"));
 
   console.log("tempArray", tempArray);
   jewelryData.images = tempArray;

@@ -96,7 +96,7 @@ const getUploadedImageIds = async (imageUrls) => {
     })
     .then(function (res) {
       console.log("res", res);
-      const uploadedImageIds = res.metadata.map((image) => image.id);
+      const uploadedImageIds = res.metadata?.map((image) => image.id);
       return uploadedImageIds;
     });
   return uploadedImageIds;
