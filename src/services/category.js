@@ -257,6 +257,7 @@ class CategoryService {
   }
 
   static async getBreadcrumbFromSubCategory(subCategoryId) {
+    console.log("Service subCategoryId", subCategoryId);
     const subCategory = await prisma.category.findUnique({
       where: { id: subCategoryId },
     });
@@ -280,6 +281,7 @@ class CategoryService {
   }
 
   static async getBreadcrumbFromProduct(productSlug) {
+    console.log("Service productSlug", productSlug);
     const foundProduct = await prisma.product.findUnique({
       where: { slug: productSlug },
     });

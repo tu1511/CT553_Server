@@ -65,6 +65,7 @@ class CategoryController {
   }
 
   // static async getBreadcrumb(req, res) {
+  //   console.log("req", req.query);
   //   const subCategoryId = +req.query.fromCategoryId;
   //   const productSlug = req.query.fromProductSlug;
 
@@ -83,15 +84,28 @@ class CategoryController {
   // }
   static async getBreadcrumb(req, res) {
     const subCategoryId = +req.query.fromCategoryId; // Ép kiểu về số
-    const productSlug = req.query.fromProductSlug;
+    // const productSlug = req.query.fromProductSlug;
 
-    if (!subCategoryId && !productSlug) {
+    // if (!subCategoryId && !productSlug) {
+    //   throw new BadRequest("Invalid Request");
+    // }
+
+    if (!subCategoryId) {
       throw new BadRequest("Invalid Request");
     }
 
-    const breadcrumb = productSlug
-      ? await CategoryService.getBreadcrumbFromProduct(productSlug)
-      : await CategoryService.getBreadcrumbFromSubCategory(subCategoryId);
+    // console.log("Controller productSlug", productSlug);
+    // const res1 = await CategoryService.getBreadcrumbFromProduct(productSlug);
+    // console.log("res1", res1);
+
+    console.log("Controller subCategoryId", subCategoryId);
+    const res2 = await CategoryService.getBreadcrumbFromSubCategory(
+      +req.query.fromCategoryId
+    );
+    console.log("res2", res2);
+
+    // const breadcrumb = productSlug ? res1 : res2;
+    const breadcrumb = res2;
 
     new OKResponse({
       metadata: breadcrumb,
