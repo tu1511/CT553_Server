@@ -64,8 +64,25 @@ class CategoryController {
     }).send(res);
   }
 
+  // static async getBreadcrumb(req, res) {
+  //   const subCategoryId = +req.query.fromCategoryId;
+  //   const productSlug = req.query.fromProductSlug;
+
+  //   console.log(subCategoryId, productSlug);
+  //   if (!subCategoryId && !productSlug) {
+  //     throw new BadRequest("Invalid Request");
+  //   }
+
+  //   const breadcrumb = productSlug
+  //     ? await CategoryService.getBreadcrumbFromProduct(productSlug)
+  //     : await CategoryService.getBreadcrumbFromSubCategory(subCategoryId);
+
+  //   new OKResponse({
+  //     metadata: breadcrumb,
+  //   }).send(res);
+  // }
   static async getBreadcrumb(req, res) {
-    const subCategoryId = +req.query.fromCategoryId;
+    const subCategoryId = +req.query.fromCategoryId; // Ép kiểu về số
     const productSlug = req.query.fromProductSlug;
 
     if (!subCategoryId && !productSlug) {

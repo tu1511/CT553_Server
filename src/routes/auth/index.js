@@ -22,7 +22,7 @@ router.post(
     .isLength({ min: 8 })
     .withMessage("Password should have at least 8 characters!"),
   body("phone").isMobilePhone().withMessage("Invalid phone number!"),
-  body("gender").isBoolean().withMessage("Invalid gender!"),
+  // body("gender").isBoolean().withMessage("Invalid gender!"),
   // body("birthday").isBefore(new Date()),
   validate,
   asyncHandler(AuthController.register)

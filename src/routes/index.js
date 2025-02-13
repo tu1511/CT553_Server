@@ -7,5 +7,6 @@ router.use("/category", require("./category"));
 router.use("/product", require("./product"));
 router.use("/order", require("./order"));
 router.use("/uploaddata", require("./uploadData"));
+router.use("/address", require("./address"));
 
 module.exports = router;

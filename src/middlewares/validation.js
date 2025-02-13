@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 const { BadRequest } = require("../response/error");
 const prisma = require("../config/prismaClient");
+const GiaoHangNhanhService = require("../services/ghn");
 
 const uniqueEmail = async (email) => {
   if (!email) return false;
@@ -122,6 +123,65 @@ const existProductCategory = async (productCategoryId, { req }) => {
   if (!foundProductCategory) throw new BadRequest("Product category not found");
 };
 
+const existProvince = async (provinceId, { req }) => {
+  if (!provinceId) return true;
+
+  const provinces = await GiaoHangNhanhService.getProvinces();
+
+  const foundProvince = provinces.find((province) => {
+    return province.ProvinceID === +provinceId;
+  });
+
+  if (!foundProvince) throw new BadRequest("Province not found");
+
+  req.body.provinceName = foundProvince.ProvinceName;
+};
+
+const existDistrictOfProvince = async (districtId, { req }) => {
+  if (!districtId || !req.body.provinceId) return true;
+
+  const districts = await GiaoHangNhanhService.getDistrictsByProvinceId(
+    req.body.provinceId
+  );
+
+  const foundDistrict = districts.find(
+    (district) => district.DistrictID === +districtId
+  );
+
+  if (!foundDistrict) throw new BadRequest("District not found");
+
+  req.body.districtName = foundDistrict.DistrictName;
+};
+
+const existWardOfDistrict = async (wardCode, { req }) => {
+  if (!wardCode || !req.body.districtId) return true;
+
+  const wards = await GiaoHangNhanhService.getWardsByDistrictId(
+    req.body.districtId
+  );
+
+  const foundWard = wards.find((ward) => {
+    return ward.WardCode === wardCode;
+  });
+
+  if (!foundWard) throw new BadRequest("Ward not found");
+
+  req.body.wardName = foundWard.WardName;
+};
+
+const existAddressOfAccount = async (addressId, { req }) => {
+  if (!addressId) return true;
+
+  const foundAddress = await prisma.address.findFirst({
+    where: {
+      id: +addressId,
+      accountId: +req.account.id,
+    },
+  });
+
+  if (!foundAddress) throw new BadRequest("Address not found");
+};
+
 module.exports = {
   validate,
   uniqueEmail,
@@ -134,4 +194,8 @@ module.exports = {
   existProductImage,
   existUploadedImage,
   existProductCategory,
+  existProvince,
+  existDistrictOfProvince,
+  existWardOfDistrict,
+  existAddressOfAccount,
 };

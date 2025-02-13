@@ -21,8 +21,6 @@ const { DISCOUNT_TYPES } = require("../../constant/discountType");
 const express = require("express");
 const router = express.Router();
 
-router.use(authentication);
-
 router.get(
   "",
 
@@ -109,6 +107,8 @@ router.get(
   validate,
   asyncHandler(ProductController.getOneBySlugWithAllDiscounts)
 );
+
+router.use(authentication);
 
 router.post(
   "",

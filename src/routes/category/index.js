@@ -9,13 +9,14 @@ const CategoryController = require("../../controllers/category");
 const express = require("express");
 const router = express.Router();
 
+router.get("", asyncHandler(CategoryController.getAll));
+router.get("/:categorySlug", asyncHandler(CategoryController.getOneBySlug));
+router.get("/breadcrumb", asyncHandler(CategoryController.getBreadcrumb));
+
 router.use(authentication);
 
-router.get("", asyncHandler(CategoryController.getAll));
 router.get("/admin", asyncHandler(CategoryController.getAllForAdmin));
-router.get("/breadcrumb", asyncHandler(CategoryController.getBreadcrumb));
 // router.get("/:categoryId", asyncHandler(CategoryController.getOne));
-router.get("/:categorySlug", asyncHandler(CategoryController.getOneBySlug));
 router.get(
   "/parent/:categoryId",
   asyncHandler(CategoryController.getRootParent)
