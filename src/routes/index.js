@@ -8,5 +8,7 @@ router.use("/product", require("./product"));
 router.use("/order", require("./order"));
 router.use("/uploaddata", require("./uploadData"));
 router.use("/address", require("./address"));
+router.use("/shippings", require("./shipping"));
+// router.use("/payments", require("./payment"));
 
 module.exports = router;
