@@ -142,6 +142,62 @@ class ProductService {
     return await ProductService.crawlMany({ categorySlugs, urls: links });
   }
 
+  // static async create({
+  //   uploadedImageIds,
+  //   categoryIds,
+  //   variants,
+  //   discounts,
+  //   ...data
+  // }) {
+  //   const newProduct = await prisma.$transaction(async (tx) => {
+  //     const createdProduct = await tx.product.create({
+  //       data: {
+  //         ...data,
+  //       },
+  //     });
+
+  //     await tx.variant.createMany({
+  //       data: variants.map((variant) => ({
+  //         size: variant.size,
+  //         price: +variant.price,
+  //         quantity: +variant.quantity,
+  //         productId: createdProduct.id,
+  //       })),
+  //     });
+
+  //     await tx.productDiscount.createMany({
+  //       data: discounts.map((discount) => ({
+  //         productId: createdProduct.id,
+  //         discountType: discount.discountType,
+  //         discountValue: +discount.discountValue,
+  //         startDate: new Date(discount.startDate).toISOString(),
+  //         endDate: new Date(discount.endDate).toISOString(),
+  //       })),
+  //     });
+
+  //     await tx.productImage.createMany({
+  //       data: uploadedImageIds.map((uploadedImageId) => ({
+  //         imageId: uploadedImageId,
+  //         productId: createdProduct.id,
+  //       })),
+  //     });
+
+  //     await tx.productCategory.createMany({
+  //       data: categoryIds.map((categoryId) => ({
+  //         categoryId: categoryId,
+  //         productId: createdProduct.id,
+  //       })),
+  //     });
+
+  //     return createdProduct;
+  //   });
+
+  //   // create embeddings
+  //   // await ProductService.createEmbeddingsForProduct(newProduct.id);
+
+  //   return newProduct;
+  // }
+
   static async create({
     uploadedImageIds,
     categoryIds,
@@ -156,15 +212,30 @@ class ProductService {
         },
       });
 
-      await tx.variant.createMany({
-        data: variants.map((variant) => ({
-          size: variant.size,
-          price: +variant.price,
-          quantity: +variant.quantity,
-          productId: createdProduct.id,
+      // Tạo variants trước (không lưu giá)
+      const createdVariants = await Promise.all(
+        variants.map(async (variant) => {
+          return tx.variant.create({
+            data: {
+              size: variant.size,
+              quantity: +variant.quantity,
+              productId: createdProduct.id,
+            },
+          });
+        })
+      );
+
+      // Tạo lịch sử giá cho từng variant
+      await tx.history_Price.createMany({
+        data: createdVariants.map((variant, index) => ({
+          variantId: variant.id,
+          price: +variants[index].price, // Lấy giá từ input
+          startDate: new Date().toISOString(),
+          endDate: new Date().toISOString(), // Giá đầu tiên endDate sẽ cập nhật khi có giá mới
         })),
       });
 
+      // Thêm các chương trình giảm giá
       await tx.productDiscount.createMany({
         data: discounts.map((discount) => ({
           productId: createdProduct.id,
@@ -175,6 +246,7 @@ class ProductService {
         })),
       });
 
+      // Thêm ảnh sản phẩm
       await tx.productImage.createMany({
         data: uploadedImageIds.map((uploadedImageId) => ({
           imageId: uploadedImageId,
@@ -182,6 +254,7 @@ class ProductService {
         })),
       });
 
+      // Thêm danh mục sản phẩm
       await tx.productCategory.createMany({
         data: categoryIds.map((categoryId) => ({
           categoryId: categoryId,
@@ -191,9 +264,6 @@ class ProductService {
 
       return createdProduct;
     });
-
-    // create embeddings
-    // await ProductService.createEmbeddingsForProduct(newProduct.id);
 
     return newProduct;
   }

@@ -19,7 +19,7 @@ class ShippingService {
         toDistrictId,
       });
 
-    console.log("availableServices", availableServices);
+    // console.log("availableServices", availableServices);
 
     const DEFAULT_SERVICE_ID = availableServices[0].service_id;
 
@@ -34,7 +34,7 @@ class ShippingService {
         weightInGram,
       }
     );
-
+    console.log("orderFee", orderFee?.data);
     return orderFee.data;
   }
 }

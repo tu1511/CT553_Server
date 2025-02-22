@@ -53,6 +53,7 @@ model Account {
   // review                  Review[]
   // ratingRecommendation    RatingRecommendation[]
   // viewCountRecommendation ViewCountRecommendation[]
+  Order     Order[]
 
   @@map("accounts")
 }
@@ -74,6 +75,7 @@ model Address {
   accountId Int     @map("account_id")
   account   Account @relation(fields: [accountId], references: [id])
   // orders    Order[]
+  Order     Order[]
 
   @@map("addresses")
 }
@@ -201,121 +203,120 @@ model Product {
   @@map("products")
 }
 
+model History_Price {
+  id        Int      @id @default(autoincrement()) @map("history_price_id")
+  price     Float
+  startDate DateTime @default(now()) @map("start_date")
+  endDate   DateTime @updatedAt @map("end_date")
+
+  variantId Int     @map("variant_id")
+  Variant   Variant @relation(fields: [variantId], references: [id])
+
+  @@map("history_prices")
+}
+
 model Variant {
   id        Int    @id @default(autoincrement()) @map("variant_id")
-  price     Float
   size      String
   quantity  Int
   productId Int    @map("product_id")
 
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product      Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  priceHistory History_Price[] // Thêm quan hệ với bảng History_Price
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  // orderDetail OrderDetail[]
+  updatedAt DateTime @map("updated_at")
+
+  OrderDetail OrderDetail[]
 
   @@map("variants")
 }
 
-// model PaymentMethod {
-//   id   Int    @id @default(autoincrement()) @map("payment_method_id")
-//   name String
+model PaymentMethod {
+  id   Int    @id @default(autoincrement()) @map("payment_method_id")
+  name String
 
-//   payments Payment[]
+  payments Payment[]
 
-//   @@map("payment_methods")
-// }
+  @@map("payment_methods")
+}
 
-// model PaymentStatus {
-//   id   Int    @id @default(autoincrement()) @map("payment_status_id")
-//   name String
+model PaymentStatus {
+  id   Int    @id @default(autoincrement()) @map("payment_status_id")
+  name String
 
-//   payments Payment[]
+  payments Payment[]
 
-//   @@map("payment_statuses")
-// }
+  @@map("payment_statuses")
+}
 
-// model Payment {
-//   id              Int   @id @default(autoincrement()) @map("payment_id")
-//   amount          Float
-//   paymentStatusId Int   @map("payment_status_id")
-//   paymentMethodId Int   @map("payment_method_id")
-//   orderId         Int   @unique @map("order_id")
+model Payment {
+  id              Int   @id @default(autoincrement()) @map("payment_id")
+  amount          Float
+  paymentStatusId Int   @map("payment_status_id")
+  paymentMethodId Int   @map("payment_method_id")
+  orderId         Int   @unique @map("order_id")
 
-//   paymentMethod PaymentMethod @relation(fields: [paymentMethodId], references: [id])
-//   paymentStatus PaymentStatus @relation(fields: [paymentStatusId], references: [id])
-//   order         Order         @relation(fields: [orderId], references: [id])
+  paymentMethod PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+  paymentStatus PaymentStatus @relation(fields: [paymentStatusId], references: [id])
+  order         Order         @relation(fields: [orderId], references: [id])
 
-//   createdAt DateTime @default(now()) @map("created_at")
-//   updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-//   @@map("payments")
-// }
+  @@map("payments")
+}
 
-// model OrderStatus {
-//   id   Int    @id @default(autoincrement()) @map("order_status_id")
-//   name String
+model OrderStatus {
+  id   Int    @id @default(autoincrement()) @map("order_status_id")
+  name String
 
-//   orders        Order[]
-//   orderTracking OrderTracking[]
+  orders Order[]
+  // orderTracking OrderTracking[]
 
-//   @@map("order_statuses")
-// }
+  @@map("order_statuses")
+}
 
-// model Order {
-//   id                Int   @id @default(autoincrement()) @map("order_id")
-//   totalPrice        Float @map("total_price")
-//   totalDiscount     Float @map("total_discount")
-//   finalPrice        Float @map("final_price")
-//   shippingFee       Float @map("shipping_fee")
-//   buyerId           Int   @map("buyer_id")
-//   deliveryAddressId Int   @map("delivery_address_id")
-//   currentStatusId   Int   @map("current_status_id")
+model Order {
+  id                Int   @id @default(autoincrement()) @map("order_id")
+  totalPrice        Float @map("total_price")
+  totalDiscount     Float @map("total_discount")
+  finalPrice        Float @map("final_price")
+  shippingFee       Float @map("shipping_fee")
+  buyerId           Int   @map("buyer_id")
+  deliveryAddressId Int   @map("delivery_address_id")
+  currentStatusId   Int   @map("current_status_id")
 
-//   buyer           Account         @relation(fields: [buyerId], references: [id], onDelete: Cascade)
-//   currentStatus   OrderStatus     @relation(fields: [currentStatusId], references: [id])
-//   deliveryAddress Address         @relation(fields: [deliveryAddressId], references: [id])
-//   payment         Payment?
-//   orderTracking   OrderTracking[]
-//   orderDetail     OrderDetail[]
-//   usedCouponId    Int?            @map("used_coupon_id")
-//   usedCoupon      Coupon?         @relation(fields: [usedCouponId], references: [id])
+  buyer           Account       @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  currentStatus   OrderStatus   @relation(fields: [currentStatusId], references: [id])
+  deliveryAddress Address       @relation(fields: [deliveryAddressId], references: [id])
+  payment         Payment?
+  // orderTracking   OrderTracking[]
+  orderDetail     OrderDetail[]
+  usedCouponId    Int?          @map("used_coupon_id")
+  // usedCoupon      Coupon?         @relation(fields: [usedCouponId], references: [id])
 
-//   createdAt DateTime @default(now()) @map("created_at")
-//   updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-//   @@map("orders")
-// }
+  @@map("orders")
+}
 
-// model OrderTracking {
-//   id            Int       @id @default(autoincrement()) @map("order_tracking_id")
-//   orderId       Int       @map("order_id")
-//   orderStatusId Int       @map("order_status_id")
-//   beginAt       DateTime  @default(now()) @map("begin_at")
-//   finishAt      DateTime? @map("finish_at")
+model OrderDetail {
+  orderId   Int   @map("order_id")
+  variantId Int   @map("variant_id")
+  quantity  Int
+  price     Float
+  discount  Float @default(0)
 
-//   order       Order       @relation(fields: [orderId], references: [id])
-//   orderStatus OrderStatus @relation(fields: [orderStatusId], references: [id])
+  order   Order   @relation(fields: [orderId], references: [id])
+  variant Variant @relation(fields: [variantId], references: [id])
 
-//   @@unique([orderId, orderStatusId])
-//   @@map("order_trackings")
-// }
+  // review Review[]
 
-// model OrderDetail {
-//   orderId   Int   @map("order_id")
-//   variantId Int   @map("variant_id")
-//   quantity  Int
-//   price     Float
-//   discount  Float @default(0)
-
-//   order   Order   @relation(fields: [orderId], references: [id])
-//   variant Variant @relation(fields: [variantId], references: [id])
-
-//   review Review[]
-
-//   @@id([orderId, variantId])
-//   @@map("order_details")
-// }
+  @@id([orderId, variantId])
+  @@map("order_details")
+}
 
 // model Review {
 //   id      Int    @id @default(autoincrement()) @map("review_id")

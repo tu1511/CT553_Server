@@ -21,6 +21,7 @@ class CategoryService {
             parent: {
               select: {
                 slug: true,
+                thumbnailImageId: true,
               },
             },
             thumbnailImage: true,
