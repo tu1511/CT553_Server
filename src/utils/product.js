@@ -7,6 +7,7 @@ const {
 } = require("../constant/productType");
 const { commonIncludeOptionsInReview } = require("../utils/commonInclude");
 const { vi } = require("date-fns/locale");
+const { history_Price } = require("../config/prismaClient");
 
 // for client
 const commonIncludeOptionsInProduct = {
@@ -26,7 +27,11 @@ const commonIncludeOptionsInProduct = {
   },
   // thumbnailImage: true,
   // viewImage: true,
-  variants: true,
+  variants: {
+    include: {
+      priceHistory: true,
+    },
+  },
   productDiscount: {
     where: {
       startDate: {

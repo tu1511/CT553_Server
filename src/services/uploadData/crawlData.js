@@ -58,7 +58,7 @@ const getProduct = async (url) => {
   for (let i = 0; i < sizes.length; i++) {
     variants.push({
       size: sizes[i],
-      price: prices[0],
+      price: prices[0] + i * 50000,
     });
   }
   jewelryData.variants = variants;

@@ -8,6 +8,7 @@ const {
   createDiscountForProducts,
   uploadModules,
   uploadPermissions,
+  uploadPrice,
 } = require("../../services/uploadData/basic");
 const {
   uploadParentCategories,
@@ -30,7 +31,8 @@ router.post("/basic", (req, res) => {
   // uploadOrderStatuses();
   // createDiscountForProducts();
   // uploadModules();
-  uploadPermissions();
+  // uploadPermissions();
+  uploadPrice();
   res.send("Basic data uploaded successfully");
 });
 

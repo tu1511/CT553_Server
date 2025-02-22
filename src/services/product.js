@@ -29,6 +29,9 @@ class ProductService {
   static async crawl({ url, categorySlugs }) {
     const productData = await getProduct(url);
 
+    console.log("productData", productData);
+    // return;
+
     const findProduct = await prisma.product.findFirst({
       where: {
         name: productData.name,
@@ -100,9 +103,23 @@ class ProductService {
       await tx.variant.createMany({
         data: productData.variants.map((variant) => ({
           size: variant.size,
-          price: variant.price,
           quantity: 10,
           productId: createdProduct.id,
+        })),
+      });
+
+      // get created variants
+      const createdVariants = await tx.variant.findMany({
+        where: {
+          productId: createdProduct.id,
+        },
+      });
+
+      await tx.history_Price.createMany({
+        data: createdVariants.map((variant, index) => ({
+          variantId: variant.id,
+          price: +productData.variants[index].price,
+          startDate: new Date().toISOString(),
         })),
       });
 
@@ -213,17 +230,21 @@ class ProductService {
       });
 
       // Tạo variants trước (không lưu giá)
-      const createdVariants = await Promise.all(
-        variants.map(async (variant) => {
-          return tx.variant.create({
-            data: {
-              size: variant.size,
-              quantity: +variant.quantity,
-              productId: createdProduct.id,
-            },
-          });
-        })
-      );
+
+      await tx.variant.createMany({
+        data: variants.map((variant) => ({
+          size: variant.size,
+          quantity: +variant.quantity,
+          productId: createdProduct.id,
+        })),
+      });
+
+      // get created variants
+      const createdVariants = await tx.variant.findMany({
+        where: {
+          productId: createdProduct.id,
+        },
+      });
 
       // Tạo lịch sử giá cho từng variant
       await tx.history_Price.createMany({
@@ -231,7 +252,6 @@ class ProductService {
           variantId: variant.id,
           price: +variants[index].price, // Lấy giá từ input
           startDate: new Date().toISOString(),
-          endDate: new Date().toISOString(), // Giá đầu tiên endDate sẽ cập nhật khi có giá mới
         })),
       });
 
@@ -453,6 +473,14 @@ class ProductService {
     let products = await prisma.product.findMany({ ...query, skip: offset });
 
     products = products.map((product) => {
+      const variants = product.variants.map((variant) => {
+        const price = variant.priceHistory[variant.priceHistory.length - 1];
+        return { ...variant, price: price.price };
+      }); // get last price
+      return { ...product, variants };
+    });
+
+    products = products.map((product) => {
       let sortedVariants = product.variants.sort((a, b) => a.price - b.price);
       // calculate sum of quantity of variants
       let totalQuantity = sortedVariants.reduce(
@@ -483,6 +511,11 @@ class ProductService {
 
     const sortedVariants = product.variants.sort((a, b) => a.price - b.price);
 
+    sortedVariants = sortedVariants.map((variant) => {
+      const price = variant.priceHistory[variant.priceHistory.length - 1];
+      return { ...variant, price: price.price };
+    });
+
     return { ...product, variants: sortedVariants };
   }
 
@@ -495,7 +528,12 @@ class ProductService {
       include: commonIncludeOptionsInProduct,
     });
 
-    const sortedVariants = product.variants.sort((a, b) => a.price - b.price);
+    let sortedVariants = product.variants.sort((a, b) => a.price - b.price);
+
+    sortedVariants = sortedVariants.map((variant) => {
+      const price = variant.priceHistory[variant.priceHistory.length - 1];
+      return { ...variant, price: price.price };
+    });
 
     return { ...product, variants: sortedVariants };
   }
