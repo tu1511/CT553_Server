@@ -30,6 +30,12 @@ class AccountController {
     }).send(res);
   }
 
+  static async getLoggedInAccount(req, res) {
+    new OKResponse({
+      metadata: await AccountService.getOne(+req.account.id),
+    }).send(res);
+  }
+
   static async create(req, res) {
     new CreatedResponse({
       message: "Create user successfully",

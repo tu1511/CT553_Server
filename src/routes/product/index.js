@@ -112,7 +112,6 @@ router.use(authentication);
 
 router.post(
   "",
-  // permission([ADMIN, EMPLOYEE]),
   body("name").notEmpty().withMessage("Name is missing"),
   body("description").notEmpty().withMessage("Description is missing"),
   body("material").notEmpty().withMessage("Material is missing"),
@@ -121,8 +120,6 @@ router.post(
     .isArray()
     .withMessage("CategoryIds should be an array")
     .custom(existCategories),
-  body("thumbnailImageId").custom(existUploadedImage),
-  body("viewImageId").custom(existUploadedImage),
   body("uploadedImageIds")
     .isArray()
     .withMessage("uploadedImageIds should be an array"),

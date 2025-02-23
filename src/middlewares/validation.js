@@ -56,6 +56,7 @@ const existCategory = async (categoryId) => {
 
 const existCategories = async (categoryIds) => {
   if (!categoryIds) return true;
+  let countFoundCategories = 0;
 
   for (let categoryId of categoryIds) {
     if (!Number.parseInt(categoryId))
@@ -66,9 +67,12 @@ const existCategories = async (categoryIds) => {
         id: +categoryId,
       },
     });
-    if (foundCategories.length !== categoryIds.length) {
-      throw new BadRequest("Some categories not found");
-    }
+
+    if (foundCategory) countFoundCategories++;
+  }
+
+  if (countFoundCategories !== categoryIds.length) {
+    throw new BadRequest("Some categories not found");
   }
 };
 
