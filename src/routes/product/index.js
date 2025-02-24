@@ -198,11 +198,7 @@ router.delete(
 router.post(
   "/:id/discount",
   param("id").custom(existProduct),
-  body("discountType")
-    .notEmpty()
-    .withMessage("Discount type is missing")
-    .isIn(DISCOUNT_TYPES)
-    .withMessage("Invalid discount type"),
+
   body("discountValue").notEmpty().withMessage("Discount value is missing"),
   body("startDate")
     .notEmpty()
@@ -227,11 +223,7 @@ router.post(
 router.put(
   "/:id/discount",
   param("id").custom(existProduct),
-  body("discountType")
-    .notEmpty()
-    .withMessage("Discount type is missing")
-    .isIn(DISCOUNT_TYPES)
-    .withMessage("Invalid discount type"),
+
   body("discountValue").notEmpty().withMessage("Discount value is missing"),
   body("startDate")
     .notEmpty()

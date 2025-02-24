@@ -2,7 +2,7 @@ const prisma = require("../config/prismaClient");
 const { PRODUCT_TRENDING } = require("../constant/productType");
 const { CreatedResponse, OKResponse } = require("../response/success");
 const ProductService = require("../services/product");
-// const ProductDiscountService = require("../services/productDiscount");
+const ProductDiscountService = require("../services/productDiscount");
 
 class ProductController {
   static async create(req, res) {

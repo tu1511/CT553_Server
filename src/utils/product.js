@@ -32,16 +32,17 @@ const commonIncludeOptionsInProduct = {
       priceHistory: true,
     },
   },
-  productDiscount: {
-    where: {
-      startDate: {
-        lte: new Date().toISOString(),
-      },
-      endDate: {
-        gte: new Date().toISOString(),
-      },
-    },
-  },
+  // productDiscount: {
+  //   where: {
+  //     startDate: {
+  //       lte: new Date().toISOString(),
+  //     },
+  //     endDate: {
+  //       gte: new Date().toISOString(),
+  //     },
+  //   },
+  // },
+  productDiscount: true,
   // do not show invisible reviews
   // hide invisible reviews
   // reviews: {
@@ -67,13 +68,11 @@ const commonIncludeOptionsInProductAdmin = {
       },
     },
   },
-  thumbnailImage: true,
-  viewImage: true,
   variants: true,
   productDiscount: true,
-  reviews: {
-    include: commonIncludeOptionsInReview,
-  },
+  // reviews: {
+  //   include: commonIncludeOptionsInReview,
+  // },
 };
 
 const getQueryObjectBasedOnFilters = async (currentQueryObject, filters) => {

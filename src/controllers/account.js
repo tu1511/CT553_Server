@@ -72,6 +72,7 @@ class AccountController {
   }
 
   static async toggleActiveAccount(req, res) {
+    console.log("req", req.account);
     new CreatedResponse({
       metadata: await AccountService.toggleActive(req.params.accountId),
     }).send(res);

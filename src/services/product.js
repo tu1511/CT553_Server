@@ -259,7 +259,6 @@ class ProductService {
       await tx.productDiscount.createMany({
         data: discounts.map((discount) => ({
           productId: createdProduct.id,
-          discountType: discount.discountType,
           discountValue: +discount.discountValue,
           startDate: new Date(discount.startDate).toISOString(),
           endDate: new Date(discount.endDate).toISOString(),

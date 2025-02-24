@@ -393,7 +393,6 @@ model OrderDetail {
 model ProductDiscount {
   id            Int      @id @default(autoincrement()) @map("product_discount_id")
   productId     Int      @map("product_id")
-  discountType  String   @map("discount_type")
   discountValue Float    @map("discount_value")
   startDate     DateTime @map("start_date")
   endDate       DateTime @map("end_date")
