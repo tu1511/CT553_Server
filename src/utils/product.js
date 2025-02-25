@@ -32,17 +32,16 @@ const commonIncludeOptionsInProduct = {
       priceHistory: true,
     },
   },
-  // productDiscount: {
-  //   where: {
-  //     startDate: {
-  //       lte: new Date().toISOString(),
-  //     },
-  //     endDate: {
-  //       gte: new Date().toISOString(),
-  //     },
-  //   },
-  // },
-  productDiscount: true,
+  productDiscount: {
+    where: {
+      startDate: {
+        lte: new Date().toISOString(),
+      },
+      endDate: {
+        gte: new Date().toISOString(),
+      },
+    },
+  },
   // do not show invisible reviews
   // hide invisible reviews
   // reviews: {
@@ -68,7 +67,11 @@ const commonIncludeOptionsInProductAdmin = {
       },
     },
   },
-  variants: true,
+  variants: {
+    include: {
+      priceHistory: true,
+    },
+  },
   productDiscount: true,
   // reviews: {
   //   include: commonIncludeOptionsInReview,
