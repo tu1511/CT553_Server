@@ -75,10 +75,7 @@ class ProductController {
 
   static async deleteImage(req, res) {
     new CreatedResponse({
-      metadata: await ProductService.deleteImage(
-        +req.params.productImageId,
-        req.filename
-      ),
+      metadata: await ProductService.deleteImage(+req.params.productImageId),
     }).send(res);
   }
 

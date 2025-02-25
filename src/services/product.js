@@ -603,7 +603,7 @@ class ProductService {
     });
   }
 
-  static async deleteImage(productImageId, filename) {
+  static async deleteImage(productImageId) {
     const { imageId } = await prisma.productImage.findUnique({
       where: {
         id: productImageId,
