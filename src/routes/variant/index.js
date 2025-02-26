@@ -1,11 +1,7 @@
 const { param, body, query } = require("express-validator");
 const VariantController = require("../../controllers/variant");
 const { asyncHandler } = require("../../middlewares/asyncHandler");
-const {
-  existVariant,
-  validate,
-  existProduct,
-} = require("../../middlewares/validation");
+const { validate, existProduct } = require("../../middlewares/validation");
 const { authentication, permission } = require("../../middlewares/auth");
 const { ADMIN, EMPLOYEE } = require("../../constant/roles");
 
@@ -40,9 +36,8 @@ router.post(
 );
 
 router.put(
-  "/",
-
-  param("productId").custom(existProduct).custom(existVariant),
+  "/:id",
+  param("productId").custom(existProduct),
   validate,
   asyncHandler(VariantController.update)
 );

@@ -245,4 +245,12 @@ router.put(
   asyncHandler(ProductController.updateDiscount)
 );
 
+router.delete(
+  "/:id/discount",
+  param("productId").custom(existProduct),
+  // param("id").custom(existVariant),
+  validate,
+  asyncHandler(ProductController.deleteDiscount)
+);
+
 module.exports = router;

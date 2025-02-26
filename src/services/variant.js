@@ -69,15 +69,45 @@ class VariantService {
   }
 
   static async update({ id, size, price, quantity }) {
-    return await prisma.variant.update({
-      where: {
-        id,
-      },
-      data: {
-        size,
-        price,
-        quantity: +quantity,
-      },
+    return await prisma.$transaction(async (tx) => {
+      // Cập nhật Variant với size và quantity mới
+      const updatedVariant = await tx.variant.update({
+        where: { id },
+        data: {
+          size,
+          quantity: Number(quantity),
+        },
+      });
+
+      // Tìm bản ghi History_Price "hoạt động" (endDate = null) cho variant
+      const activeHistory = await tx.history_Price.findFirst({
+        where: {
+          variantId: id,
+          endDate: null,
+        },
+        orderBy: { startDate: "desc" },
+      });
+
+      // Nếu có activeHistory và giá mới khác với giá hiện tại
+      if (activeHistory && Number(price) !== activeHistory.price) {
+        // Cập nhật bản ghi History_Price cũ: set endDate thành thời gian hiện tại
+        await tx.history_Price.update({
+          where: { id: activeHistory.id },
+          data: {
+            endDate: new Date().toISOString(),
+          },
+        });
+        // Tạo bản ghi History_Price mới với giá mới
+        await tx.history_Price.create({
+          data: {
+            variantId: id,
+            price: Number(price),
+            startDate: new Date().toISOString(),
+            endDate: null,
+          },
+        });
+      }
+      return updatedVariant;
     });
   }
 

@@ -115,6 +115,13 @@ class ProductController {
     }).send(res);
   }
 
+  static async deleteDiscount(req, res) {
+    new CreatedResponse({
+      message: "Product discount deleted",
+      metadata: await ProductDiscountService.delete(+req.params.id),
+    }).send(res);
+  }
+
   static async getAllTextEmbeddings(req, res) {
     new OKResponse({
       metadata: await ProductService.getAllTextEmbeddings(),

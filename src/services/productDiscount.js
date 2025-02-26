@@ -50,6 +50,14 @@ class ProductDiscountService {
       },
     });
   }
+
+  static async delete(id) {
+    return await prisma.productDiscount.delete({
+      where: {
+        id: Number(id),
+      },
+    });
+  }
 }
 
 module.exports = ProductDiscountService;
