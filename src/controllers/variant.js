@@ -4,7 +4,10 @@ const VariantService = require("../services/variant");
 class VariantController {
   static async create(req, res) {
     new CreatedResponse({
-      metadata: await VariantService.create(+req.params.productId, req.body),
+      metadata: await VariantService.create({
+        ...req.body,
+        productId: +req.params.id,
+      }),
     }).send(res);
   }
 
