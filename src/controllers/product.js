@@ -153,7 +153,7 @@ class ProductController {
   }
 
   static async search(req, res) {
-    const query = req.query.s;
+    const query = req.query.search;
 
     new OKResponse({
       metadata: await ProductService.search(query),

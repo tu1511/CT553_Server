@@ -18,13 +18,13 @@ const commonIncludeOptionsInOrder = {
               id: true,
               name: true,
               slug: true,
-              thumbnailImage: {
-                select: {
-                  path: true,
-                },
-              },
               productDiscount: true,
               variants: true,
+              images: {
+                select: {
+                  image: true,
+                },
+              },
             },
           },
         },
@@ -36,12 +36,6 @@ const commonIncludeOptionsInOrder = {
     include: {
       paymentMethod: true,
       paymentStatus: true,
-    },
-  },
-  orderTracking: {
-    include: true,
-    orderBy: {
-      beginAt: "desc",
     },
   },
 };
@@ -90,7 +84,7 @@ class OrderService {
     deliveryAddressId,
     paymentMethodId,
     items = [],
-    usedCouponId,
+    // usedCouponId,
   }) {
     await this.validateOrder({
       totalPrice,
@@ -98,7 +92,7 @@ class OrderService {
       finalPrice,
       shippingFee,
       items,
-      usedCouponId,
+      // usedCouponId,
     });
 
     const createdOrder = await prisma.$transaction(async (tx) => {
@@ -111,7 +105,7 @@ class OrderService {
           buyerId,
           deliveryAddressId,
           currentStatusId: ORDER_STATUS_ID_MAPPING.AWAITING_CONFIRM,
-          usedCouponId,
+          // usedCouponId,
         },
       });
 
@@ -182,39 +176,30 @@ class OrderService {
         },
       });
 
-      // create tracking for order
-      await tx.orderTracking.create({
-        data: {
-          orderId: createdOrder.id,
-          orderStatusId: ORDER_STATUS_ID_MAPPING.AWAITING_CONFIRM,
-          beginAt: new Date(),
-        },
-      });
+      // if (usedCouponId) {
+      //   await tx.coupon.update({
+      //     where: {
+      //       id: usedCouponId,
+      //     },
+      //     data: {
+      //       currentUse: {
+      //         increment: 1,
+      //       },
+      //     },
+      //   });
 
-      if (usedCouponId) {
-        await tx.coupon.update({
-          where: {
-            id: usedCouponId,
-          },
-          data: {
-            currentUse: {
-              increment: 1,
-            },
-          },
-        });
-
-        await tx.collectedCoupons.update({
-          where: {
-            accountId_couponId: {
-              accountId: buyerId,
-              couponId: usedCouponId,
-            },
-          },
-          data: {
-            used: true,
-          },
-        });
-      }
+      //   await tx.collectedCoupons.update({
+      //     where: {
+      //       accountId_couponId: {
+      //         accountId: buyerId,
+      //         couponId: usedCouponId,
+      //       },
+      //     },
+      //     data: {
+      //       used: true,
+      //     },
+      //   });
+      // }
 
       return createdOrder;
     });
@@ -233,13 +218,13 @@ class OrderService {
   }
 
   static async getAll({
-    customerSearch,
-    beginDate,
-    endDate,
-    orderStatusId = ORDER_STATUS_ID_MAPPING.ALL,
-    paymentMethodId = PAYMENT_METHOD_ID_MAPPING.ALL,
-    paymentStatusId = PAYMENT_STATUS_ID_MAPPING.ALL,
-    sortBy,
+    // customerSearch,
+    // beginDate,
+    // endDate,
+    // orderStatusId = ORDER_STATUS_ID_MAPPING.ALL,
+    // paymentMethodId = PAYMENT_METHOD_ID_MAPPING.ALL,
+    // paymentStatusId = PAYMENT_STATUS_ID_MAPPING.ALL,
+    // sortBy,
     page = 1,
     limit,
   }) {
@@ -251,82 +236,82 @@ class OrderService {
       },
     };
 
-    if (+orderStatusId != ORDER_STATUS_ID_MAPPING.ALL) {
-      if (!query.where) Object.assign(query, { where: {} });
-      query.where.currentStatusId = orderStatusId;
-    }
+    // if (+orderStatusId != ORDER_STATUS_ID_MAPPING.ALL) {
+    //   if (!query.where) Object.assign(query, { where: {} });
+    //   query.where.currentStatusId = orderStatusId;
+    // }
 
-    if (+paymentMethodId != PAYMENT_STATUS_ID_MAPPING.ALL) {
-      if (!query.where) Object.assign(query, { where: {} });
-      if (!query.where.payment) Object.assign(query.where, { payment: {} });
-      query.where.payment.paymentMethodId = paymentMethodId;
-    }
+    // if (+paymentMethodId != PAYMENT_STATUS_ID_MAPPING.ALL) {
+    //   if (!query.where) Object.assign(query, { where: {} });
+    //   if (!query.where.payment) Object.assign(query.where, { payment: {} });
+    //   query.where.payment.paymentMethodId = paymentMethodId;
+    // }
 
-    if (+paymentStatusId != PAYMENT_STATUS_ID_MAPPING.ALL) {
-      if (!query.where) Object.assign(query, { where: {} });
-      if (!query.where.payment) Object.assign(query.where, { payment: {} });
-      query.where.payment.paymentStatusId = paymentStatusId;
-    }
+    // if (+paymentStatusId != PAYMENT_STATUS_ID_MAPPING.ALL) {
+    //   if (!query.where) Object.assign(query, { where: {} });
+    //   if (!query.where.payment) Object.assign(query.where, { payment: {} });
+    //   query.where.payment.paymentStatusId = paymentStatusId;
+    // }
 
-    if (customerSearch) {
-      // if customerSearch is a number, search by id
-      let buyer = [];
-      if (!isNaN(customerSearch)) {
-        buyer = await prisma.account.findMany({
-          where: {
-            id: {
-              equals: +customerSearch,
-            },
-          },
-          select: {
-            id: true,
-          },
-        });
-      } else {
-        buyer = await prisma.account.findMany({
-          where: {
-            fullName: {
-              contains: customerSearch,
-              mode: "insensitive",
-            },
-          },
-          select: {
-            id: true,
-          },
-        });
-      }
+    // if (customerSearch) {
+    //   // if customerSearch is a number, search by id
+    //   let buyer = [];
+    //   if (!isNaN(customerSearch)) {
+    //     buyer = await prisma.account.findMany({
+    //       where: {
+    //         id: {
+    //           equals: +customerSearch,
+    //         },
+    //       },
+    //       select: {
+    //         id: true,
+    //       },
+    //     });
+    //   } else {
+    //     buyer = await prisma.account.findMany({
+    //       where: {
+    //         fullName: {
+    //           contains: customerSearch,
+    //           mode: "insensitive",
+    //         },
+    //       },
+    //       select: {
+    //         id: true,
+    //       },
+    //     });
+    //   }
 
-      // find all orders of these buyers
-      if (!query.where) Object.assign(query, { where: {} });
-      if (buyer.length > 0) {
-        query.where.buyerId = {
-          in: buyer.map((b) => b.id),
-        };
-      } else {
-        query.where.buyerId = -1;
-      }
-    }
+    //   // find all orders of these buyers
+    //   if (!query.where) Object.assign(query, { where: {} });
+    //   if (buyer.length > 0) {
+    //     query.where.buyerId = {
+    //       in: buyer.map((b) => b.id),
+    //     };
+    //   } else {
+    //     query.where.buyerId = -1;
+    //   }
+    // }
 
-    if (beginDate && endDate) {
-      // end date is the next day of the input
+    // if (beginDate && endDate) {
+    //   // end date is the next day of the input
 
-      if (!query.where) Object.assign(query, { where: {} });
-      query.where.createdAt = {
-        gte: new Date(beginDate),
-        lt: new Date(endDate + "T23:59:59.000Z"),
-      };
-    }
+    //   if (!query.where) Object.assign(query, { where: {} });
+    //   query.where.createdAt = {
+    //     gte: new Date(beginDate),
+    //     lt: new Date(endDate + "T23:59:59.000Z"),
+    //   };
+    // }
 
-    // sort
-    if (sortBy?.field === "createdAt") {
-      query.orderBy = {
-        createdAt: sortBy.direction,
-      };
-    } else if (sortBy?.field === "finalPrice") {
-      query.orderBy = {
-        finalPrice: sortBy.direction,
-      };
-    }
+    // // sort
+    // if (sortBy?.field === "createdAt") {
+    //   query.orderBy = {
+    //     createdAt: sortBy.direction,
+    //   };
+    // } else if (sortBy?.field === "finalPrice") {
+    //   query.orderBy = {
+    //     finalPrice: sortBy.direction,
+    //   };
+    // }
 
     // pagination
     const count = await prisma.order.count({
@@ -586,7 +571,7 @@ class OrderService {
   static async getOrdersOfBuyerByOrderStatus({
     buyerId,
     orderStatusId,
-    sortBy,
+    // sortBy,
     page,
     limit,
   }) {
@@ -596,9 +581,9 @@ class OrderService {
       },
       include: commonIncludeOptionsInOrder,
       take: limit,
-      orderBy: {
-        createdAt: "desc",
-      },
+      // orderBy: {
+      //   createdAt: "desc",
+      // },
     };
 
     if (+orderStatusId != ORDER_STATUS_ID_MAPPING.ALL) {
@@ -606,15 +591,15 @@ class OrderService {
     }
 
     // sort
-    if (sortBy?.field === "createdAt") {
-      query.orderBy = {
-        createdAt: sortBy.direction,
-      };
-    } else if (sortBy?.field === "finalPrice") {
-      query.orderBy = {
-        finalPrice: sortBy.direction,
-      };
-    }
+    // if (sortBy?.field === "createdAt") {
+    //   query.orderBy = {
+    //     createdAt: sortBy.direction,
+    //   };
+    // } else if (sortBy?.field === "finalPrice") {
+    //   query.orderBy = {
+    //     finalPrice: sortBy.direction,
+    //   };
+    // }
 
     // pagination
     const count = await prisma.order.count({
@@ -622,6 +607,7 @@ class OrderService {
     });
 
     const offset = page > 1 ? (page - 1) * limit : 0;
+    // console.log("offset", offset);
     const totalPages = Math.ceil(count / limit);
 
     let orders = await prisma.order.findMany({ ...query, skip: offset });
@@ -637,9 +623,9 @@ class OrderService {
   }
 
   static async updateOrderStatus(orderId, { fromStatus, toStatus }) {
-    if (+fromStatus + 1 != +toStatus) {
-      throw new BadRequest("Invalid request");
-    }
+    // if (+fromStatus + 1 != +toStatus) {
+    //   throw new BadRequest("Invalid request");
+    // }
 
     const foundOrder = await prisma.order.findUnique({
       where: { id: orderId },
@@ -650,13 +636,13 @@ class OrderService {
     }
 
     // create order tracking
-    await prisma.orderTracking.create({
-      data: {
-        orderId,
-        orderStatusId: +toStatus,
-        beginAt: new Date(),
-      },
-    });
+    // await prisma.orderTracking.create({
+    //   data: {
+    //     orderId,
+    //     orderStatusId: +toStatus,
+    //     beginAt: new Date(),
+    //   },
+    // });
 
     // if update to delivered, update payment status to success
     if (
@@ -725,13 +711,13 @@ class OrderService {
     }
 
     // create order tracking
-    await prisma.orderTracking.create({
-      data: {
-        orderId: foundedOrder.id,
-        orderStatusId: ORDER_STATUS_ID_MAPPING.CANCELED,
-        beginAt: new Date(),
-      },
-    });
+    // await prisma.orderTracking.create({
+    //   data: {
+    //     orderId: foundedOrder.id,
+    //     orderStatusId: ORDER_STATUS_ID_MAPPING.CANCELED,
+    //     beginAt: new Date(),
+    //   },
+    // });
 
     return await prisma.$transaction(async (tx) => {
       await Promise.all(
@@ -920,11 +906,7 @@ class OrderService {
           }
         }
         if (discount.endDate > new Date()) {
-          if (discount.discountType === "percentage") {
-            productDiscount = (variant.price * discount.discountValue) / 100;
-          } else {
-            productDiscount = discount.discountValue;
-          }
+          productDiscount = (variant.price * discount.discountValue) / 100;
         }
       }
       console.log("productDiscount", productDiscount);
@@ -936,9 +918,9 @@ class OrderService {
     console.log("reCalculateTotalPrice", reCalculateTotalPrice);
     console.log("totalPrice", totalPrice);
 
-    if (reCalculateTotalPrice != totalPrice) {
-      throw new BadRequest("Total price is invalid");
-    }
+    // if (reCalculateTotalPrice != totalPrice) {
+    //   throw new BadRequest("Total price is invalid");
+    // }
 
     if (usedCouponId) {
       const usedCoupon = await prisma.coupon.findUnique({
@@ -956,6 +938,12 @@ class OrderService {
         throw new BadRequest("Total discount from coupon is invalid");
       }
     }
+
+    console.log("totalDiscount", totalDiscount);
+    console.log("shippingFee", shippingFee);
+    console.log("totalPrice", totalPrice);
+    console.log("----------------------------");
+    console.log("finalPrice", finalPrice);
 
     if (finalPrice != totalPrice - totalDiscount + shippingFee) {
       throw new BadRequest("Final price is invalid");

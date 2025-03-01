@@ -16,18 +16,17 @@ const router = express.Router();
 
 router.use(authentication);
 
-router.get("/all", permission(), asyncHandler(OrderController.getAll));
+router.get("/all", asyncHandler(OrderController.getAll));
 router.get("/allForReport", asyncHandler(OrderController.getAllForReport));
 router.get("/status-all", asyncHandler(OrderController.getAllOrderStatus));
 
 // router.use(authentication);
 
-router.get("/:orderId", permission(), asyncHandler(OrderController.getById));
+router.get("/:orderId", asyncHandler(OrderController.getById));
 router.get("/customer/:orderId", asyncHandler(OrderController.customerGetById));
 
 router.put(
   "/:orderId/status",
-  permission(),
   param("orderId").custom(existOrder),
   body("fromStatus")
     .notEmpty()
@@ -45,10 +44,8 @@ router.put(
 
 router.post(
   "",
-  permission(),
   body("totalPrice").notEmpty().withMessage("Total price is missing"),
   body("totalDiscount").notEmpty().withMessage("Total discount is missing"),
-  body("finalPrice").notEmpty().withMessage("Final price is missing"),
   body("shippingFee").notEmpty().withMessage("Shipping fee is missing"),
   body("deliveryAddressId")
     .notEmpty()

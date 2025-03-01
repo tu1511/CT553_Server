@@ -186,6 +186,43 @@ const existAddressOfAccount = async (addressId, { req }) => {
   if (!foundAddress) throw new BadRequest("Address not found");
 };
 
+const existOrder = async (orderId) => {
+  if (!orderId) return true;
+
+  const foundOrder = await prisma.order.findUnique({
+    where: {
+      id: +orderId,
+    },
+  });
+
+  if (!foundOrder) throw new BadRequest("Order not found");
+};
+
+const existOrderOfAccount = async (orderId, { req }) => {
+  if (!orderId) return true;
+
+  const foundOrder = await prisma.order.findFirst({
+    where: {
+      id: +orderId,
+      buyerId: +req.account.id,
+    },
+  });
+
+  if (!foundOrder) throw new BadRequest("Order not found");
+};
+
+const existCoupon = async (couponId) => {
+  if (!couponId) return true;
+
+  const foundCoupon = await prisma.coupon.findUnique({
+    where: {
+      id: +couponId,
+    },
+  });
+
+  if (!foundCoupon) throw new BadRequest("Coupon not found");
+};
+
 module.exports = {
   validate,
   uniqueEmail,
@@ -202,4 +239,9 @@ module.exports = {
   existDistrictOfProvince,
   existWardOfDistrict,
   existAddressOfAccount,
+  existAccount,
+  convertDateStringToISODate,
+  existOrder,
+  existOrderOfAccount,
+  existCoupon,
 };

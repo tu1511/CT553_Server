@@ -21,7 +21,6 @@ const ORDER_STATUS_ID_MAPPING = {
   DELIVERING: 3,
   DELIVERED: 4,
   CANCELED: 5,
-  RETURNED: 6,
 };
 
 module.exports = {
@@ -30,7 +29,6 @@ module.exports = {
   DELIVERING,
   DELIVERED,
   CANCELED,
-  RETURNED,
   ORDER_STATUSES,
   ORDER_STATUS_ID_MAPPING,
 };

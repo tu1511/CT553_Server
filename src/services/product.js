@@ -655,14 +655,14 @@ class ProductService {
       trimmedQuery
     );
 
-    const semanticSearchResult = await ProductService.semanticSearch(
-      trimmedQuery,
-      fullTextSearchResult
-    );
+    // const semanticSearchResult = await ProductService.semanticSearch(
+    //   trimmedQuery,
+    //   fullTextSearchResult
+    // );
 
     return {
       fullTextSearchResult,
-      semanticSearchResult,
+      // semanticSearchResult,
     };
   }
 
@@ -819,7 +819,9 @@ class ProductService {
     const searchQuery = {
       where: {
         name: {
-          search: query,
+          // search: query,
+          contains: query,
+          mode: "insensitive",
         },
         visible: true,
       },
