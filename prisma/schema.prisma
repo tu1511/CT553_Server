@@ -4,9 +4,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  // extensions = [pgvector(map: "vector")]
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pgvector(map: "vector")]
 }
 
 model UploadedImage {
@@ -18,9 +18,9 @@ model UploadedImage {
   category      Category?
   productImages ProductImage[]
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  // productImageEmbeddings ProductImageEmbeddings?
+  createdAt              DateTime                @default(now()) @map("created_at")
+  updatedAt              DateTime                @updatedAt @map("updated_at")
+  productImageEmbeddings ProductImageEmbeddings?
   // reviewImage            ReviewImage[]
   // shopInfo               ShopInfo[]
   // banner                 Banner[]
@@ -44,9 +44,8 @@ model Account {
   roleId Int  @default(3) @map("role_id")
   role   Role @relation(fields: [roleId], references: [id])
 
-  addresses Address[]
-  // orders           Order[]
-  // collectedCoupons CollectedCoupons[]
+  addresses        Address[]
+  collectedCoupons CollectedCoupons[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -193,10 +192,10 @@ model Product {
   // viewImageId Int?           @unique @map("view_image_id")
   // viewImage   UploadedImage? @relation("ViewImage", fields: [viewImageId], references: [id], onDelete: Cascade)
 
-  productDiscount ProductDiscount[]
-  // productImageEmbeddings ProductImageEmbeddings[]
+  productDiscount        ProductDiscount[]
+  productImageEmbeddings ProductImageEmbeddings[]
 
-  // productEmbedding        ProductEmbeddings?
+  productEmbedding ProductEmbeddings?
   // ratingRecommendation    RatingRecommendation[]
   // viewCountRecommendation ViewCountRecommendation[]
 
@@ -291,7 +290,7 @@ model Order {
   // orderTracking   OrderTracking[]
   orderDetail     OrderDetail[]
   usedCouponId    Int?          @map("used_coupon_id")
-  // usedCoupon      Coupon?         @relation(fields: [usedCouponId], references: [id])
+  usedCoupon      Coupon?       @relation(fields: [usedCouponId], references: [id])
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -353,42 +352,41 @@ model OrderDetail {
 //   @@map("review_images")
 // }
 
-// model Coupon {
-//   id                Int      @id @default(autoincrement()) @map("coupon_id")
-//   code              String   @unique
-//   discountType      String
-//   discountValue     Float
-//   startDate         DateTime @map("start_date")
-//   endDate           DateTime @map("end_date")
-//   quantity          Int
-//   visible           Boolean  @default(true)
-//   collectedQuantity Int      @default(0) @map("collected_quantity")
-//   currentUse        Int      @default(0) @map("current_use")
-//   minimumPriceToUse Float    @map("minumin_price_to_use")
+model Coupon {
+  id                Int      @id @default(autoincrement()) @map("coupon_id")
+  code              String   @unique
+  discountValue     Float
+  startDate         DateTime @map("start_date")
+  endDate           DateTime @map("end_date")
+  quantity          Int
+  visible           Boolean  @default(true)
+  collectedQuantity Int      @default(0) @map("collected_quantity")
+  currentUse        Int      @default(0) @map("current_use")
+  minimumPriceToUse Float    @map("minumin_price_to_use")
 
-//   accountsCollected CollectedCoupons[]
-//   ordersUsed        Order[]
+  accountsCollected CollectedCoupons[]
+  ordersUsed        Order[]
 
-//   createdAt DateTime @default(now()) @map("created_at")
-//   updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-//   @@map("coupons")
-// }
+  @@map("coupons")
+}
 
-// model CollectedCoupons {
-//   accountId Int     @map("account_id")
-//   couponId  Int     @map("coupon_id")
-//   used      Boolean @default(false)
+model CollectedCoupons {
+  accountId Int     @map("account_id")
+  couponId  Int     @map("coupon_id")
+  used      Boolean @default(false)
 
-//   account Account @relation(fields: [accountId], references: [id])
-//   coupon  Coupon  @relation(fields: [couponId], references: [id])
+  account Account @relation(fields: [accountId], references: [id])
+  coupon  Coupon  @relation(fields: [couponId], references: [id])
 
-//   createdAt DateTime @default(now()) @map("created_at")
-//   updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-//   @@id([accountId, couponId])
-//   @@map("account_coupons")
-// }
+  @@id([accountId, couponId])
+  @@map("account_coupons")
+}
 
 model ProductDiscount {
   id            Int      @id @default(autoincrement()) @map("product_discount_id")
@@ -402,28 +400,28 @@ model ProductDiscount {
   @@map("product_discounts")
 }
 
-// model ProductEmbeddings {
-//   id        Int                   @id @default(autoincrement()) @map("product_embedding_id")
-//   productId Int                   @unique @map("product_id")
-//   embedding Unsupported("vector")
+model ProductEmbeddings {
+  id        Int                   @id @default(autoincrement()) @map("product_embedding_id")
+  productId Int                   @unique @map("product_id")
+  embedding Unsupported("vector")
 
-//   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-//   @@map("product_embeddings")
-// }
+  @@map("product_embeddings")
+}
 
-// model ProductImageEmbeddings {
-//   id Int @id @default(autoincrement()) @map("product_image_embedding_id")
+model ProductImageEmbeddings {
+  id Int @id @default(autoincrement()) @map("product_image_embedding_id")
 
-//   productId Int                   @map("product_id")
-//   imageId   Int                   @unique @map("image_id")
-//   embedding Unsupported("vector")
+  productId Int                   @map("product_id")
+  imageId   Int                   @unique @map("image_id")
+  embedding Unsupported("vector")
 
-//   product Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
-//   image   UploadedImage @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  product Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  image   UploadedImage @relation(fields: [imageId], references: [id], onDelete: Cascade)
 
-//   @@map("product_image_embeddings")
-// }
+  @@map("product_image_embeddings")
+}
 
 model PaymentPolicy {
   id        Int      @id @default(autoincrement()) @map("payment_policy_id")

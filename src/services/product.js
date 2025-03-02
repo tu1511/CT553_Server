@@ -9,11 +9,11 @@ const {
   PRODUCT_TRENDING,
   PRODUCT_SALES,
 } = require("../constant/productType");
-// const {
-//   generateEmbeddingsFromText,
-//   generateEmbeddingsFromTextV2,
-//   generateEmbeddingsFromImageUrl,
-// } = require("../utils/generateEmbeddings");
+const {
+  // generateEmbeddingsFromText,
+  generateEmbeddingsFromTextV2,
+  generateEmbeddingsFromImageUrl,
+} = require("../utils/generateEmbeddings");
 const { getUploadedImageId, getUploadedImageIds } = require("../utils");
 const { Prisma } = require("@prisma/client");
 const {
@@ -284,6 +284,9 @@ class ProductService {
       return createdProduct;
     });
 
+    // create embeddings
+    // await ProductService.createEmbeddingsForProduct(newProduct.id);
+
     return newProduct;
   }
 
@@ -295,6 +298,10 @@ class ProductService {
       select: {
         name: true,
         overview: true,
+        color: true,
+        material: true,
+        completion: true,
+        stone: true,
         categories: {
           select: {
             category: {
@@ -314,18 +321,18 @@ class ProductService {
             },
           },
         },
-        thumbnailImage: {
-          select: {
-            id: true,
-            path: true,
-          },
-        },
-        viewImage: {
-          select: {
-            id: true,
-            path: true,
-          },
-        },
+        // thumbnailImage: {
+        //   select: {
+        //     id: true,
+        //     path: true,
+        //   },
+        // },
+        // viewImage: {
+        //   select: {
+        //     id: true,
+        //     path: true,
+        //   },
+        // },
       },
     });
 
@@ -333,7 +340,7 @@ class ProductService {
       .map((category) => category.category.name)
       .join(" ");
 
-    const textToTransform = `${product.name} ${categoryNames} ${product.overview}`;
+    const textToTransform = `${product.name} ${categoryNames} ${product.overview} ${product.color} ${product.material} ${product.completion} ${product.stone}`;
     const embedding = await generateEmbeddingsFromTextV2(textToTransform);
 
     await prisma.$queryRaw`
@@ -342,21 +349,18 @@ class ProductService {
     const images = product.images.map((image) => {
       return { id: image.image.id, path: image.image.path };
     });
-    const thumbnailImage = {
-      id: product.thumbnailImage.id,
-      path: product.thumbnailImage.path,
-    };
-    let viewImage = null;
-    if (product.viewImage) {
-      viewImage = { id: product.viewImage.id, path: product.viewImage.path };
-    }
-    // const viewImage = { id: product.viewImage.id, path: product.viewImage.path };
+    // const thumbnailImage = {
+    //   id: product.thumbnailImage.id,
+    //   path: product.thumbnailImage.path,
+    // };
+    // let viewImage = null;
+    // if (product.viewImage) {
+    //   viewImage = { id: product.viewImage.id, path: product.viewImage.path };
+    // }
+    // // const viewImage = { id: product.viewImage.id, path: product.viewImage.path };
     let allImages = [];
-    if (viewImage) {
-      allImages = [thumbnailImage, viewImage, ...images];
-    } else {
-      allImages = [thumbnailImage, ...images];
-    }
+
+    allImages = [...images];
 
     Promise.all(
       allImages.map(async (image) => {
@@ -655,14 +659,14 @@ class ProductService {
       trimmedQuery
     );
 
-    // const semanticSearchResult = await ProductService.semanticSearch(
-    //   trimmedQuery,
-    //   fullTextSearchResult
-    // );
+    const semanticSearchResult = await ProductService.semanticSearch(
+      trimmedQuery,
+      fullTextSearchResult
+    );
 
     return {
       fullTextSearchResult,
-      // semanticSearchResult,
+      semanticSearchResult,
     };
   }
 
@@ -671,7 +675,7 @@ class ProductService {
   }
 
   static async createTextEmbeddingsForAllProducts() {
-    // await prisma.$queryRaw`TRUNCATE TABLE product_embeddings RESTART IDENTITY`;
+    await prisma.$queryRaw`TRUNCATE TABLE product_embeddings RESTART IDENTITY`;
 
     let products = await prisma.product.findMany({
       // where: {
@@ -685,6 +689,10 @@ class ProductService {
         id: true,
         name: true,
         overview: true,
+        color: true,
+        material: true,
+        completion: true,
+        stone: true,
         categories: {
           select: {
             category: {
@@ -719,7 +727,7 @@ class ProductService {
           .map((category) => category.category.name)
           .join(" ");
 
-        const textToTransform = `${product.name} ${categoryNames} ${product.overview}`;
+        const textToTransform = `${product.name} ${categoryNames} ${product.overview} ${product.color} ${product.material} ${product.completion} ${product.stone}`;
         const embedding = await generateEmbeddingsFromTextV2(textToTransform);
 
         await prisma.$queryRaw`
@@ -844,8 +852,8 @@ class ProductService {
     console.log("fullTextSearchResultIds", fullTextSearchResultIds);
 
     let result;
-    let threshold = fullTextSearchResult.length > 0 ? 0.3 : 0.6;
-    // let threshold = 0.3;
+    // let threshold = fullTextSearchResult.length > 0 ? 0.3 : 0.6;
+    let threshold = 0.4;
     console.log("threshold", threshold);
 
     result =
