@@ -19,10 +19,8 @@ router.get("/methods", asyncHandler(PaymentController.getPaymentMethods));
 
 router.post(
   "/create-payment-url",
-  body("orderId")
-    .notEmpty()
-    .withMessage("Order ID is missng"),
-    // .custom(existOrderOfAccount),
+  body("orderId").notEmpty().withMessage("Order ID is missing"),
+  // .custom(existOrderOfAccount),
   body("amount").notEmpty().withMessage("Amount to pay is missing"),
   validate,
   asyncHandler(PaymentController.createPaymentUrlToVNPay)

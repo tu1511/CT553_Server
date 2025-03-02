@@ -27,7 +27,9 @@ class PaymentController {
     const orderId = +req.body.orderId;
     const orderInfo = "Thanh toan qua VNPay cho don hang voi ma " + orderId;
     const orderType = 200000;
-    const returnUrl = `${process.env.BACKEND_URL}/api/payments/vnpay_return`;
+    const returnUrl = `${process.env.BACKEND_URL}/api/v1/payments/vnpay_return`;
+
+    console.log("returnUrl", returnUrl);
 
     let VNPayParams = {};
     VNPayParams["vnp_Version"] = "2.1.0";
@@ -92,9 +94,12 @@ class PaymentController {
         vnp_Params["vnp_ResponseCode"]
       );
       // res.render("success", { code: vnp_Params["vnp_ResponseCode"] });
+
+      console.log(vnp_Params["vnp_ResponseCode"]);
       res.redirect(
-        `${process.env.FRONTEND_URL}/tai-khoan/quan-ly-don-hang/${orderId}?code=${vnp_Params["vnp_ResponseCode"]}`
-        // `${process.env.FRONTEND_URL}/tai-khoan/quan-ly-don-hang/${orderId}`
+        // `${process.env.FRONTEND_URL}/tai-khoan/quan-ly-don-hang/${orderId}?code=${vnp_Params["vnp_ResponseCode"]}`
+        // // `${process.env.FRONTEND_URL}/tai-khoan/quan-ly-don-hang/${orderId}`
+        `${process.env.FRONTEND_URL}/cam-on`
       );
     } else {
       res.json({ code: "97" });

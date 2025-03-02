@@ -819,9 +819,9 @@ class ProductService {
     const searchQuery = {
       where: {
         name: {
-          // search: query,
-          contains: query,
-          mode: "insensitive",
+          search: query,
+          // contains: query,
+          // mode: "insensitive",
         },
         visible: true,
       },

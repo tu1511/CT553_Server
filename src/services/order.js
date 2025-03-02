@@ -645,10 +645,7 @@ class OrderService {
     // });
 
     // if update to delivered, update payment status to success
-    if (
-      +fromStatus === ORDER_STATUS_ID_MAPPING.DELIVERING &&
-      +toStatus === ORDER_STATUS_ID_MAPPING.DELIVERED
-    ) {
+    if (+toStatus === ORDER_STATUS_ID_MAPPING.DELIVERED) {
       await prisma.payment.update({
         where: {
           orderId,
