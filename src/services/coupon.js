@@ -4,20 +4,20 @@ const { BadRequest } = require("../response/error");
 class CouponService {
   static async create({
     code,
-    discountType,
     discountValue,
     startDate,
     endDate,
+    visible,
     quantity,
     minimumPriceToUse,
   }) {
     const newCoupon = await prisma.coupon.create({
       data: {
         code,
-        discountType,
         discountValue: +discountValue,
         startDate: new Date(startDate).toISOString(),
         endDate: new Date(endDate + "T23:59:59.000Z").toISOString(),
+        visible,
         quantity: +quantity,
         minimumPriceToUse: +minimumPriceToUse,
       },
@@ -36,7 +36,8 @@ class CouponService {
 
   static async update(couponId, data) {
     if (data.startDate) data.startDate = new Date(data.startDate).toISOString();
-    if (data.endDate) data.endDate = new Date(data.endDate + "T23:59:59.000Z").toISOString();
+    if (data.endDate)
+      data.endDate = new Date(data.endDate + "T23:59:59.000Z").toISOString();
     return await prisma.coupon.update({
       where: {
         id: couponId,

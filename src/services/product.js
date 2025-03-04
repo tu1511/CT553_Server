@@ -762,18 +762,6 @@ class ProductService {
             },
           },
         },
-        thumbnailImage: {
-          select: {
-            id: true,
-            path: true,
-          },
-        },
-        viewImage: {
-          select: {
-            id: true,
-            path: true,
-          },
-        },
       },
     });
 
@@ -788,28 +776,17 @@ class ProductService {
 
     // products = products.filter((product) => !hasEmbeddings.includes(product.id));
 
-    products = products.slice(0, 5);
+    products = products.slice(25, 32);
 
     products.map(async (product) => {
       let images = product.images.map((image) => {
         return { id: image.image.id, path: image.image.path };
       });
-      let thumbnailImage = {
-        id: product.thumbnailImage.id,
-        path: product.thumbnailImage.path,
-      };
-      let allImages = [thumbnailImage, ...images];
-      if (product.viewImage) {
-        let viewImage = {
-          id: product.viewImage.id,
-          path: product.viewImage.path,
-        };
-        allImages = [thumbnailImage, viewImage, ...images];
-      }
+
       console.log("product.id", product.id);
 
       Promise.all(
-        allImages.map(async (image) => {
+        images.map(async (image) => {
           try {
             const embedding = await generateEmbeddingsFromImageUrl(image.path);
             // console.log("embedding", embedding);
@@ -1061,7 +1038,8 @@ ORDER BY cosine_similarity DESC; `;
     return productIds;
   }
 
-  static async imageSearch(imageUrl, uploadedImagePath) {
+  static async imageSearch(imageUrl) {
+    console.log("imageUrl", imageUrl);
     // remove all files in uploads folder
     const currentFile = path.basename(imageUrl);
     await ProductService.removeAllFilesAsync(
@@ -1070,9 +1048,6 @@ ORDER BY cosine_similarity DESC; `;
     )
       .then(() => console.log("All files have been removed asynchronously."))
       .catch(console.error);
-
-    // const embeddingRESULT = await generateEmbeddingsFromImageUrl(imageUrl);
-    // console.log("embeddingRESULT", embeddingRESULT);
 
     const embeddings = Array.from(
       await generateEmbeddingsFromImageUrl(imageUrl)
@@ -1093,7 +1068,7 @@ ORDER BY cosine_similarity DESC; `;
     } while (
       result.length > 0 &&
       result[0].cosine_similarity > 0.6 &&
-      foundResults.length < 10
+      foundResults.length < 8
     );
 
     const products = [];
@@ -1108,14 +1083,6 @@ ORDER BY cosine_similarity DESC; `;
       });
       products.push({ ...product, similarImageId: foundResult.image_id });
     }
-
-    // if (uploadedImagePath) {
-    //   rm(uploadedImagePath, (err) => {
-    //     if (err) {
-    //       console.error(err);
-    //     }
-    //   });
-    // }
 
     return products;
   }
