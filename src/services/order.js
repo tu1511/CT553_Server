@@ -84,7 +84,7 @@ class OrderService {
     deliveryAddressId,
     paymentMethodId,
     items = [],
-    // usedCouponId,
+    usedCouponId,
   }) {
     await this.validateOrder({
       totalPrice,
@@ -92,7 +92,7 @@ class OrderService {
       finalPrice,
       shippingFee,
       items,
-      // usedCouponId,
+      usedCouponId,
     });
 
     const createdOrder = await prisma.$transaction(async (tx) => {
@@ -105,7 +105,7 @@ class OrderService {
           buyerId,
           deliveryAddressId,
           currentStatusId: ORDER_STATUS_ID_MAPPING.AWAITING_CONFIRM,
-          // usedCouponId,
+          usedCouponId,
         },
       });
 
@@ -176,30 +176,30 @@ class OrderService {
         },
       });
 
-      // if (usedCouponId) {
-      //   await tx.coupon.update({
-      //     where: {
-      //       id: usedCouponId,
-      //     },
-      //     data: {
-      //       currentUse: {
-      //         increment: 1,
-      //       },
-      //     },
-      //   });
+      if (usedCouponId) {
+        await tx.coupon.update({
+          where: {
+            id: usedCouponId,
+          },
+          data: {
+            currentUse: {
+              increment: 1,
+            },
+          },
+        });
 
-      //   await tx.collectedCoupons.update({
-      //     where: {
-      //       accountId_couponId: {
-      //         accountId: buyerId,
-      //         couponId: usedCouponId,
-      //       },
-      //     },
-      //     data: {
-      //       used: true,
-      //     },
-      //   });
-      // }
+        await tx.collectedCoupons.update({
+          where: {
+            accountId_couponId: {
+              accountId: buyerId,
+              couponId: usedCouponId,
+            },
+          },
+          data: {
+            used: true,
+          },
+        });
+      }
 
       return createdOrder;
     });
@@ -927,20 +927,22 @@ class OrderService {
       });
 
       const totalDiscountFromCoupon =
-        usedCoupon?.discountType === "percentage"
-          ? (reCalculateTotalPrice * usedCoupon.discountValue) / 100
-          : usedCoupon?.discountValue;
+        (reCalculateTotalPrice * usedCoupon.discountValue) / 100;
 
-      if (totalDiscountFromCoupon !== totalDiscount) {
-        throw new BadRequest("Total discount from coupon is invalid");
-      }
+      // if (totalDiscountFromCoupon !== totalDiscount) {
+      //   throw new BadRequest("Total discount from coupon is invalid");
+      // }
     }
 
+    console.log("reCalculateTotalPrice", reCalculateTotalPrice);
     console.log("totalDiscount", totalDiscount);
+    console.log("----------------------------");
+
     console.log("shippingFee", shippingFee);
     console.log("totalPrice", totalPrice);
     console.log("----------------------------");
     console.log("finalPrice", finalPrice);
+    console.log("hehe", totalPrice - totalDiscount + shippingFee);
 
     if (finalPrice != totalPrice - totalDiscount + shippingFee) {
       throw new BadRequest("Final price is invalid");

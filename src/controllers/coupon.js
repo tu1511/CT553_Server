@@ -25,8 +25,10 @@ class CouponController {
 
   static async getByCode(req, res) {
     new OKResponse({
-      message: "Coupon retrieved successfully",
-      metadata: await CouponService.getByCode(req.params.code),
+      metadata: await CouponService.getByCode(
+        +req.account.id,
+        req.body.couponCode
+      ),
     }).send(res);
   }
 

@@ -26,12 +26,35 @@ class CouponService {
     return newCoupon;
   }
 
-  static async getByCode(code) {
-    return await prisma.coupon.findUnique({
+  static async getByCode(accountId, couponCode) {
+    const coupon = await prisma.coupon.findUnique({
+      where: { code: couponCode },
+    });
+
+    if (!coupon) {
+      throw new BadRequest("Coupon not found");
+    }
+
+    const foundCollectedCoupon = await prisma.collectedCoupons.findUnique({
       where: {
-        code,
+        accountId_couponId: {
+          accountId,
+          couponId: coupon.id,
+        },
       },
     });
+
+    if (foundCollectedCoupon) {
+      return {
+        alreadyCollected: true,
+        message: "Coupon already collected",
+      };
+    }
+
+    return {
+      alreadyCollected: false,
+      message: "Coupon available",
+    };
   }
 
   static async update(couponId, data) {
