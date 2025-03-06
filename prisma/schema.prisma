@@ -16,6 +16,7 @@ model UploadedImage {
 
   account       Account?
   category      Category?
+  article       Article?
   productImages ProductImage[]
 
   createdAt              DateTime                @default(now()) @map("created_at")
@@ -461,6 +462,23 @@ model WarrantyPolicy {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("warranty_policies")
+}
+
+model Article {
+  id      Int    @id @default(autoincrement()) @map("article_id")
+  slug    String @unique
+  title   String @unique
+  author  String
+  content String
+
+  thumbnailImageId Int           @unique @map("thumbnail_image_id")
+  thumbnailImage   UploadedImage @relation(fields: [thumbnailImageId], references: [id], onDelete: Cascade)
+
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("articles")
 }
 
 // model BannerCategory {
