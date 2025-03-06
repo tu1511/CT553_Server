@@ -14,9 +14,9 @@ class ArticleController {
     }).send(res);
   }
 
-  static async getById(req, res) {
+  static async getOneBySlug(req, res) {
     new OKResponse({
-      metadata: await ArticleService.getById(req.params.articleId),
+      metadata: await ArticleService.getOneBySlug(req.params.slug),
     }).send(res);
   }
 
@@ -32,9 +32,9 @@ class ArticleController {
     }).send(res);
   }
 
-  static async toggleHide(req, res) {
+  static async delete(req, res) {
     new OKResponse({
-      metadata: await ArticleService.toggleHide(req.params.articleId),
+      metadata: await ArticleService.delete(+req.params.articleId),
     }).send(res);
   }
 }

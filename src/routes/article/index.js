@@ -9,13 +9,11 @@ const router = express.Router();
 
 router.get("", validate, asyncHandler(ArticleController.getAll));
 
-router.get("/current", asyncHandler(ArticleController.getCurrent));
-
 router.get(
-  "/:articleId",
-  param("articleId").notEmpty().withMessage("Article ID is missing"),
+  "/slug",
+  param("slug"),
   validate,
-  asyncHandler(ArticleController.getById)
+  asyncHandler(ArticleController.getOneBySlug)
 );
 router.use(authentication);
 
@@ -36,12 +34,11 @@ router.put(
   asyncHandler(ArticleController.update)
 );
 
-// Hide/Unhide article
-router.put(
-  "/toggleHide/:articleId",
+router.delete(
+  "/:articleId",
   param("articleId").notEmpty().withMessage("Article ID is missing"),
   validate,
-  asyncHandler(ArticleController.toggleHide)
+  asyncHandler(ArticleController.delete)
 );
 
 module.exports = router;

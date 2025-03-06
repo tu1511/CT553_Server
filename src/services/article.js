@@ -17,13 +17,18 @@ class ArticleService {
     });
   }
 
-  static async getById(articleId) {
-    return await prisma.article.findUnique({
+  static async getOneBySlug(slug) {
+    return await prisma.article.findFirst({
       where: {
-        id: +articleId,
+        slug,
+        visible: true,
+      },
+      include: {
+        thumbnailImage: true,
       },
     });
   }
+
   static async create({
     title,
     slug,
@@ -44,38 +49,17 @@ class ArticleService {
     });
   }
 
-  static async update(articleId, { title, author, content, visible }) {
-    if (visible) {
-      await prisma.article.updateMany({
-        where: { visible: true },
-        data: { visible: false },
-      });
-    }
+  static async update(articleId, updatedData) {
     return await prisma.article.update({
-      where: { id: +articleId },
-      data: { title, author, content, visible },
+      where: {
+        id: +articleId,
+      },
+      data: updatedData,
     });
   }
 
-  static async toggleVisibility(articleId) {
-    const article = await prisma.article.findUnique({
-      where: { id: +articleId },
-      select: { visible: true },
-    });
-
-    if (!article) throw new Error("Article not found");
-
-    if (!article.visible) {
-      await prisma.article.updateMany({
-        where: { visible: true },
-        data: { visible: false },
-      });
-    }
-
-    return prisma.article.update({
-      where: { id: +articleId },
-      data: { visible: !article.visible },
-    });
+  static async delete(articleId) {
+    await prisma.article.delete({ where: { id: articleId } });
   }
 }
 
