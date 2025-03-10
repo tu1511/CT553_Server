@@ -22,7 +22,7 @@ const {
   commonIncludeOptionsInProductAdmin,
 } = require("../utils/product");
 const { getProduct, getAllProductLinks } = require("./uploadData/crawlData");
-// const RecommendService = require("./recommend");
+const RecommendService = require("./recommend");
 
 class ProductService {
   // crawl
@@ -923,6 +923,8 @@ ORDER BY cosine_similarity DESC; `;
       ];
       // remove duplicate
       recommendProductIds = [...new Set(recommendProductIds)];
+
+      console.log("recommendProductIds base on review", recommendProductIds);
 
       if (recommendProductIds.length < 10) {
         // base on view

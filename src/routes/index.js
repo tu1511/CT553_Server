@@ -13,5 +13,6 @@ router.use("/payments", require("./payment"));
 router.use("/variant", require("./variant"));
 router.use("/coupon", require("./coupon"));
 router.use("/article", require("./article"));
+router.use("/review", require("./review"));
 
 module.exports = router;

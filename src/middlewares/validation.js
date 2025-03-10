@@ -223,6 +223,54 @@ const existCoupon = async (couponId) => {
   if (!foundCoupon) throw new BadRequest("Coupon not found");
 };
 
+const existVariant = async (id) => {
+  // console.log("validation id", id);
+  // if (!Number.parseInt(id)) {
+  //   console.log("validation not found");
+  //   throw new BadRequest("Variant not found");
+  // }
+  // const foundVariant = await prisma.variant.findUnique({
+  //   where: { id },
+  // });
+  // console.log("validation foundVariant", foundVariant);
+  // if (!foundVariant) throw new BadRequest("Variant not found");
+};
+
+const existReview = async (reviewId) => {
+  if (!reviewId) return true;
+  if (!Number.parseInt(reviewId)) throw new BadRequest("Review not found");
+  const foundReview = await prisma.review.findUnique({
+    where: { id: +reviewId },
+  });
+
+  if (!foundReview) throw new BadRequest("Review not found");
+};
+
+const existReviewImage = async (reviewImageId, { req }) => {
+  if (!reviewImageId) return true;
+  if (!Number.parseInt(reviewImageId))
+    throw new BadRequest("Review image not found");
+  const foundReviewImage = await prisma.reviewImage.findUnique({
+    where: {
+      id: +reviewImageId,
+    },
+  });
+  if (!foundReviewImage) throw new BadRequest("Review image not found");
+};
+
+const existReviewOfAccount = async (reviewId, { req }) => {
+  if (!reviewId) return true;
+
+  const foundReview = await prisma.review.findFirst({
+    where: {
+      id: +reviewId,
+      accountId: +req.account.id,
+    },
+  });
+
+  if (!foundReview) throw new BadRequest("Review not found");
+};
+
 module.exports = {
   validate,
   uniqueEmail,
@@ -244,4 +292,8 @@ module.exports = {
   existOrder,
   existOrderOfAccount,
   existCoupon,
+  existVariant,
+  existReview,
+  existReviewImage,
+  existReviewOfAccount,
 };

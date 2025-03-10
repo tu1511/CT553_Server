@@ -22,7 +22,7 @@ model UploadedImage {
   createdAt              DateTime                @default(now()) @map("created_at")
   updatedAt              DateTime                @updatedAt @map("updated_at")
   productImageEmbeddings ProductImageEmbeddings?
-  // reviewImage            ReviewImage[]
+  reviewImage            ReviewImage[]
   // shopInfo               ShopInfo[]
   // banner                 Banner[]
 
@@ -48,12 +48,12 @@ model Account {
   addresses        Address[]
   collectedCoupons CollectedCoupons[]
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  // review                  Review[]
-  // ratingRecommendation    RatingRecommendation[]
+  createdAt            DateTime               @default(now()) @map("created_at")
+  updatedAt            DateTime               @updatedAt @map("updated_at")
+  review               Review[]
+  ratingRecommendation RatingRecommendation[]
   // viewCountRecommendation ViewCountRecommendation[]
-  Order     Order[]
+  Order                Order[]
 
   @@map("accounts")
 }
@@ -74,7 +74,6 @@ model Address {
 
   accountId Int     @map("account_id")
   account   Account @relation(fields: [accountId], references: [id])
-  // orders    Order[]
   Order     Order[]
 
   @@map("addresses")
@@ -84,7 +83,6 @@ model Role {
   id       Int       @id @default(autoincrement()) @map("role_id")
   role     String
   accounts Account[]
-  // permissions RolePermission[]
 
   @@map("roles")
 }
@@ -185,7 +183,7 @@ model Product {
   images      ProductImage[]
   categories  ProductCategory[]
 
-  // reviews Review[]
+  reviews Review[]
 
   // thumbnailImageId Int           @unique @map("thumbnail_image_id")
   // thumbnailImage   UploadedImage @relation("ThumbnailImage", fields: [thumbnailImageId], references: [id], onDelete: Cascade)
@@ -196,8 +194,8 @@ model Product {
   productDiscount        ProductDiscount[]
   productImageEmbeddings ProductImageEmbeddings[]
 
-  productEmbedding ProductEmbeddings?
-  // ratingRecommendation    RatingRecommendation[]
+  productEmbedding     ProductEmbeddings?
+  ratingRecommendation RatingRecommendation[]
   // viewCountRecommendation ViewCountRecommendation[]
 
   @@map("products")
@@ -309,49 +307,49 @@ model OrderDetail {
   order   Order   @relation(fields: [orderId], references: [id])
   variant Variant @relation(fields: [variantId], references: [id])
 
-  // review Review[]
+  review Review[]
 
   @@id([orderId, variantId])
   @@map("order_details")
 }
 
-// model Review {
-//   id      Int    @id @default(autoincrement()) @map("review_id")
-//   rating  Float?
-//   comment String
+model Review {
+  id      Int    @id @default(autoincrement()) @map("review_id")
+  rating  Float?
+  comment String
 
-//   orderId   Int      @map("order_id")
-//   variantId Int      @map("variant_id")
-//   accountId Int      @map("account_id")
-//   productId Int      @map("product_id")
-//   visible   Boolean  @default(true)
-//   createdAt DateTime @default(now()) @map("created_at")
-//   updatedAt DateTime @updatedAt @map("updated_at")
+  orderId   Int      @map("order_id")
+  variantId Int      @map("variant_id")
+  accountId Int      @map("account_id")
+  productId Int      @map("product_id")
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-//   orderDetail OrderDetail   @relation(fields: [orderId, variantId], references: [orderId, variantId])
-//   account     Account       @relation(fields: [accountId], references: [id])
-//   product     Product       @relation(fields: [productId], references: [id])
-//   reviewImage ReviewImage[]
+  orderDetail OrderDetail   @relation(fields: [orderId, variantId], references: [orderId, variantId])
+  account     Account       @relation(fields: [accountId], references: [id])
+  product     Product       @relation(fields: [productId], references: [id])
+  reviewImage ReviewImage[]
 
-//   replyToReviewId Int?    @map("reply_to_review_id")
-//   replyToReview   Review? @relation("reviewRelation", fields: [replyToReviewId], references: [id])
+  replyToReviewId Int?    @map("reply_to_review_id")
+  replyToReview   Review? @relation("reviewRelation", fields: [replyToReviewId], references: [id])
 
-//   replyByReview Review[] @relation("reviewRelation")
+  replyByReview Review[] @relation("reviewRelation")
 
-//   @@map("reviews")
-// }
+  @@map("reviews")
+}
 
-// model ReviewImage {
-//   id       Int @id @default(autoincrement()) @map("product_image_id")
-//   imageId  Int @map("image_id")
-//   reviewId Int @map("review_id")
+model ReviewImage {
+  id       Int @id @default(autoincrement()) @map("product_image_id")
+  imageId  Int @map("image_id")
+  reviewId Int @map("review_id")
 
-//   image  UploadedImage @relation(fields: [imageId], references: [id], onDelete: Cascade)
-//   review Review        @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  image  UploadedImage @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  review Review        @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 
-//   @@unique([imageId, reviewId])
-//   @@map("review_images")
-// }
+  @@unique([imageId, reviewId])
+  @@map("review_images")
+}
 
 model Coupon {
   id                Int      @id @default(autoincrement()) @map("coupon_id")
@@ -537,19 +535,19 @@ model Article {
 //   @@map("shop_infos")
 // }
 
-// model RatingRecommendation {
-//   id        Int   @id @default(autoincrement()) @map("rating_recommendation_id")
-//   accountId Int   @map("account_id")
-//   productId Int   @map("product_id")
-//   rating    Float
+model RatingRecommendation {
+  id        Int   @id @default(autoincrement()) @map("rating_recommendation_id")
+  accountId Int   @map("account_id")
+  productId Int   @map("product_id")
+  rating    Float
 
-//   count Int @default(0)
+  count Int @default(0)
 
-//   user    Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
-//   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-//   @@map("rating_recommendations")
-// }
+  @@map("rating_recommendations")
+}
 
 // model ViewCountRecommendation {
 //   id        Int @id @default(autoincrement()) @map("view_count_recommendation_id")

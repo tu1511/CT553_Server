@@ -1,79 +1,73 @@
-const { reviewImage } = require("../config/prismaClient");
+const { reviewImage, product } = require("../config/prismaClient");
 
 const commonIncludeOptionsInReview = {
-    orderDetail: {
+  orderDetail: {
+    include: {
+      variant: {
         include: {
-            variant: {
-                include: {
-                    product: {
-                        select: {
-                            id: true,
-                            name: true,
-                            slug: true,
-                            thumbnailImage: {
-                                select: {
-                                    path: true,
-                                },
-                            },
-                        },
-                    },
-                },
+          product: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
             },
+          },
         },
+      },
     },
-    account: {
+  },
+  product: true,
+  account: {
+    select: {
+      id: true,
+      fullName: true,
+      avatar: {
         select: {
-            id: true,
-            fullName: true,
-            avatar: {
-                select: {
-                    path: true,
-                },
-            }
+          path: true,
         },
+      },
     },
-    reviewImage: {
+  },
+  reviewImage: {
+    select: {
+      id: true,
+      image: {
         select: {
-            id: true,
-            image: {
-                select: {
-                    id: true,
-                    path: true,
-                },
-            },
+          id: true,
+          path: true,
         },
+      },
     },
-    // this is an array of review, we want to include the reviewImage of each review
-    replyByReview: {
-        include: {
-            account: {
-                select: {
-                    id: true,
-                    fullName: true,
-                    avatar: {
-                        select: {
-                            path: true,
-                        },
-                    }
-                },
+  },
+  // this is an array of review, we want to include the reviewImage of each review
+  replyByReview: {
+    include: {
+      account: {
+        select: {
+          id: true,
+          fullName: true,
+          avatar: {
+            select: {
+              path: true,
             },
-            reviewImage: {
-                select: {
-                    id: true,
-                    image: {
-                        select: {
-                            id: true,
-                            path: true,
-                        },
-                    },
-                },
-
+          },
+        },
+      },
+      reviewImage: {
+        select: {
+          id: true,
+          image: {
+            select: {
+              id: true,
+              path: true,
             },
-        }
+          },
+        },
+      },
     },
-
+  },
 };
 
 module.exports = {
-    commonIncludeOptionsInReview,
+  commonIncludeOptionsInReview,
 };
