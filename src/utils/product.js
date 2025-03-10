@@ -44,12 +44,12 @@ const commonIncludeOptionsInProduct = {
   },
   // do not show invisible reviews
   // hide invisible reviews
-  // reviews: {
-  // where: {
-  // visible: true,
-  //  },
-  // include: commonIncludeOptionsInReview,
-  //  },
+  reviews: {
+    where: {
+      visible: true,
+    },
+    include: commonIncludeOptionsInReview,
+  },
 };
 
 const commonIncludeOptionsInProductAdmin = {

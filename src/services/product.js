@@ -942,7 +942,7 @@ ORDER BY cosine_similarity DESC; `;
 
     console.log("recommendProductIds", recommendProductIds);
 
-    const products = await prisma.product.findMany({
+    let products = await prisma.product.findMany({
       where: {
         id: {
           in: recommendProductIds,
@@ -950,6 +950,14 @@ ORDER BY cosine_similarity DESC; `;
         visible: true,
       },
       include: commonIncludeOptionsInProduct,
+    });
+
+    products = products.map((product) => {
+      const variants = product.variants.map((variant) => {
+        const price = variant.priceHistory[variant.priceHistory.length - 1];
+        return { ...variant, price: price.price };
+      }); // get last price
+      return { ...product, variants };
     });
 
     let sortedProducts = recommendProductIds.map((id) =>
