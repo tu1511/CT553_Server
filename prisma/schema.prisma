@@ -422,44 +422,16 @@ model ProductImageEmbeddings {
   @@map("product_image_embeddings")
 }
 
-model PaymentPolicy {
-  id        Int      @id @default(autoincrement()) @map("payment_policy_id")
+model Policy {
+  id        Int      @id @default(autoincrement()) @map("policy_id")
+  slug      String   @unique
+  title     String
   content   String
   visible   Boolean  @default(true)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("payment_policies")
-}
-
-model DeliveryPolicy {
-  id        Int      @id @default(autoincrement()) @map("delivery_policy_id")
-  content   String
-  visible   Boolean  @default(true)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("delivery_policies")
-}
-
-model ReturnPolicy {
-  id        Int      @id @default(autoincrement()) @map("return_policy_id")
-  content   String
-  visible   Boolean  @default(true)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("return_policies")
-}
-
-model WarrantyPolicy {
-  id        Int      @id @default(autoincrement()) @map("warranty_policy_id")
-  content   String
-  visible   Boolean  @default(true)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("warranty_policies")
+  @@map("policies")
 }
 
 model Article {
@@ -548,16 +520,3 @@ model RatingRecommendation {
 
   @@map("rating_recommendations")
 }
-
-// model ViewCountRecommendation {
-//   id        Int @id @default(autoincrement()) @map("view_count_recommendation_id")
-//   accountId Int @map("account_id")
-//   productId Int @map("product_id")
-
-//   count Int
-
-//   user    Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
-//   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-//   @@map("view_count_recommendations")
-// }

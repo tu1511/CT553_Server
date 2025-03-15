@@ -9,10 +9,10 @@ router.use("/order", require("./order"));
 router.use("/uploaddata", require("./uploadData"));
 router.use("/address", require("./address"));
 router.use("/shippings", require("./shipping"));
-router.use("/payments", require("./payment"));
 router.use("/variant", require("./variant"));
 router.use("/coupon", require("./coupon"));
 router.use("/article", require("./article"));
 router.use("/review", require("./review"));
+router.use("/policy", require("./policy"));
 
 module.exports = router;

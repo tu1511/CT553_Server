@@ -80,11 +80,11 @@ const commonIncludeOptionsInProductAdmin = {
 
 const getQueryObjectBasedOnFilters = async (currentQueryObject, filters) => {
   const {
-    productIds,
+    // productIds,
     categoryIds,
     type,
     discount,
-    visible,
+    // visible,
     filterMinPrice,
     filterMaxPrice,
     sortBy,
@@ -113,28 +113,32 @@ const getQueryObjectBasedOnFilters = async (currentQueryObject, filters) => {
     };
   }
 
-  if (productIds.length > 0) {
-    if (queryObject.where) {
-      queryObject.where.id = {
-        in: productIds.map((id) => +id),
-      };
-    } else {
-      queryObject.where = {
-        id: {
-          in: productIds.map((id) => +id),
-        },
-      };
-    }
-  }
+  // if (productIds.length > 0) {
+  //   if (queryObject.where) {
+  //     queryObject.where.id = {
+  //       in: productIds.map((id) => +id),
+  //     };
+  //   } else {
+  //     queryObject.where = {
+  //       id: {
+  //         in: productIds.map((id) => +id),
+  //       },
+  //     };
+  //   }
+  // }
 
   if (filterMaxPrice && filterMinPrice) {
     queryObject.where = {
       ...queryObject.where,
       variants: {
         some: {
-          price: {
-            gte: filterMinPrice,
-            lte: filterMaxPrice,
+          priceHistory: {
+            some: {
+              price: {
+                gte: filterMinPrice,
+                lte: filterMaxPrice,
+              },
+            },
           },
         },
       },
@@ -205,19 +209,19 @@ const getQueryObjectBasedOnFilters = async (currentQueryObject, filters) => {
     };
   }
 
-  if (visible === "true") {
-    if (!queryObject.where) Object.assign(queryObject, { where: {} });
-    queryObject.where = {
-      ...queryObject.where,
-      visible: true,
-    };
-  } else if (visible === "false") {
-    if (!queryObject.where) Object.assign(queryObject, { where: {} });
-    queryObject.where = {
-      ...queryObject.where,
-      visible: false,
-    };
-  }
+  // if (visible === "true") {
+  //   if (!queryObject.where) Object.assign(queryObject, { where: {} });
+  //   queryObject.where = {
+  //     ...queryObject.where,
+  //     visible: true,
+  //   };
+  // } else if (visible === "false") {
+  //   if (!queryObject.where) Object.assign(queryObject, { where: {} });
+  //   queryObject.where = {
+  //     ...queryObject.where,
+  //     visible: false,
+  //   };
+  // }
 
   return queryObject;
 };

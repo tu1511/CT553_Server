@@ -14,14 +14,14 @@ class ProductController {
   static async getAll(req, res) {
     new OKResponse({
       metadata: await ProductService.getAll({
-        productSearch: req.query.productSearch, // of admin
+        // productSearch: req.query.productSearch, // of admin
         type: req.query.type,
         categoryIds: req.query.categoryIds,
         limit: +req.query.limit,
-        productIds: req.query.productIds,
+        // productIds: req.query.productIds,
         page: +req.query.page || 1,
         discount: req.query.discount,
-        visible: req.query.visible,
+        // visible: req.query.visible,
         filterMinPrice: +req.query.filterMinPrice,
         filterMaxPrice: +req.query.filterMaxPrice,
         sortBy: req.query.sortBy,

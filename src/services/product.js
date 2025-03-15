@@ -375,11 +375,11 @@ class ProductService {
     productSearch,
     type = PRODUCT_ALL,
     categoryIds = [],
-    productIds = [],
+    // productIds = [],
     page = 1,
     limit = 8,
     discount,
-    visible,
+    // visible,
     filterMinPrice,
     filterMaxPrice,
     sortBy,
@@ -391,31 +391,31 @@ class ProductService {
 
     query = await getQueryObjectBasedOnFilters(query, {
       categoryIds,
-      productIds,
+      // productIds,
       type,
       discount,
-      visible,
+      // visible,
       filterMaxPrice,
       filterMinPrice,
       sortBy,
     });
 
-    // search
-    if (productSearch) {
-      // if productSearch is a number, search by id
-      if (!query.where) Object.assign(query, { where: {} });
-      if (!isNaN(productSearch)) {
-        query.where = { ...query.where, id: +productSearch };
-      } else {
-        query.where = {
-          ...query.where,
-          name: {
-            contains: productSearch,
-            mode: "insensitive",
-          },
-        };
-      }
-    }
+    // // search
+    // if (productSearch) {
+    //   // if productSearch is a number, search by id
+    //   if (!query.where) Object.assign(query, { where: {} });
+    //   if (!isNaN(productSearch)) {
+    //     query.where = { ...query.where, id: +productSearch };
+    //   } else {
+    //     query.where = {
+    //       ...query.where,
+    //       name: {
+    //         contains: productSearch,
+    //         mode: "insensitive",
+    //       },
+    //     };
+    //   }
+    // }
 
     // sort by rating
     if (sortBy?.field === "rating") {
@@ -924,20 +924,20 @@ ORDER BY cosine_similarity DESC; `;
       // remove duplicate
       recommendProductIds = [...new Set(recommendProductIds)];
 
-      console.log("recommendProductIds base on review", recommendProductIds);
+      // console.log("recommendProductIds base on review", recommendProductIds);
 
-      if (recommendProductIds.length < 10) {
-        // base on view
-        const recommendProductsBasedOnViewCountIds =
-          await ProductService.getRecommendProductsBasedOnViewCounts(accountId);
-        recommendProductIds = [
-          ...recommendProductIds,
-          ...recommendProductsBasedOnViewCountIds,
-        ];
+      // if (recommendProductIds.length < 10) {
+      //   // base on view
+      //   const recommendProductsBasedOnViewCountIds =
+      //     await ProductService.getRecommendProductsBasedOnViewCounts(accountId);
+      //   recommendProductIds = [
+      //     ...recommendProductIds,
+      //     ...recommendProductsBasedOnViewCountIds,
+      //   ];
 
-        // remove duplicate
-        recommendProductIds = [...new Set(recommendProductIds)];
-      }
+      //   // remove duplicate
+      //   recommendProductIds = [...new Set(recommendProductIds)];
+      // }
     }
 
     console.log("recommendProductIds", recommendProductIds);
@@ -1039,14 +1039,14 @@ ORDER BY cosine_similarity DESC; `;
     return productIds;
   }
 
-  static async getRecommendProductsBasedOnViewCounts(accountId) {
-    let productIds = await RecommendService.getRecommendBaseOnViewCounts(
-      accountId
-    );
-    productIds = productIds.map((item) => item.productId);
+  // static async getRecommendProductsBasedOnViewCounts(accountId) {
+  //   let productIds = await RecommendService.getRecommendBaseOnViewCounts(
+  //     accountId
+  //   );
+  //   productIds = productIds.map((item) => item.productId);
 
-    return productIds;
-  }
+  //   return productIds;
+  // }
 
   static async imageSearch(imageUrl) {
     console.log("imageUrl", imageUrl);
