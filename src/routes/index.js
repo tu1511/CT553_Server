@@ -14,5 +14,6 @@ router.use("/coupon", require("./coupon"));
 router.use("/article", require("./article"));
 router.use("/review", require("./review"));
 router.use("/policy", require("./policy"));
+router.use("/banner", require("./banner"));
 
 module.exports = router;

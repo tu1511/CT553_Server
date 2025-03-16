@@ -271,6 +271,15 @@ const existReviewOfAccount = async (reviewId, { req }) => {
   if (!foundReview) throw new BadRequest("Review not found");
 };
 
+const existBanner = async (bannerId) => {
+  if (!bannerId) return true;
+  if (!Number.parseInt(bannerId)) throw new BadRequest("Banner not found");
+  const foundBanner = await prisma.banner.findUnique({
+    where: { id: +bannerId },
+  });
+  if (!foundBanner) throw new BadRequest("Banner not found");
+};
+
 module.exports = {
   validate,
   uniqueEmail,
@@ -296,4 +305,6 @@ module.exports = {
   existReview,
   existReviewImage,
   existReviewOfAccount,
+
+  existBanner,
 };

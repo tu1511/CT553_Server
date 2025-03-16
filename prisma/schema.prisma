@@ -23,8 +23,8 @@ model UploadedImage {
   updatedAt              DateTime                @updatedAt @map("updated_at")
   productImageEmbeddings ProductImageEmbeddings?
   reviewImage            ReviewImage[]
-  // shopInfo               ShopInfo[]
-  // banner                 Banner[]
+  shopInfo               ShopInfo[]
+  banner                 Banner[]
 
   @@map("uploaded_images")
 }
@@ -461,51 +461,47 @@ model Article {
 //   @@map("banner_categories")
 // }
 
-// model Banner {
-//   id               Int            @id @default(autoincrement()) @map("banner_id")
-//   imageId          Int            @map("image_id")
-//   name             String
-//   bannerCategoryId Int            @map("banner_category_id")
-//   bannerCategory   BannerCategory @relation(fields: [bannerCategoryId], references: [id])
-//   priority         Int            @default(0)
-//   visible          Boolean        @default(true)
-//   createdAt        DateTime       @default(now()) @map("created_at")
-//   updatedAt        DateTime       @updatedAt @map("updated_at")
-//   image            UploadedImage  @relation(fields: [imageId], references: [id], onDelete: Cascade)
+model Banner {
+  id        Int           @id @default(autoincrement()) @map("banner_id")
+  imageId   Int           @map("image_id")
+  name      String
+  priority  Int           @default(0)
+  visible   Boolean       @default(true)
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+  image     UploadedImage @relation(fields: [imageId], references: [id], onDelete: Cascade)
 
-//   @@unique([bannerCategoryId, priority])
-//   @@map("banners")
-// }
+  @@unique([priority])
+  @@map("banners")
+}
 
-// model ShopInfo {
-//   id                 Int     @id @default(autoincrement()) @map("shop_info_id")
-//   name               String
-//   fullName           String  @map("full_name")
-//   logoId             Int     @map("logo_id")
-//   phone              String
-//   email              String
-//   businessCode       String  @map("business_code")
-//   workingTime        String  @map("working_time")
-//   isMaintaining      Boolean @default(false) @map("is_maintaining")
-//   maintainingMessage String? @map("maintaining_message")
-//   slogan             String?
+model ShopInfo {
+  id                 Int     @id @default(autoincrement()) @map("shop_info_id")
+  name               String
+  logoId             Int     @map("logo_id")
+  phone              String
+  email              String
+  workingTime        String  @map("working_time")
+  isMaintaining      Boolean @default(false) @map("is_maintaining")
+  maintainingMessage String? @map("maintaining_message")
+  slogan             String?
 
-//   // address
-//   provinceName  String @map("province_name")
-//   provinceId    Int    @map("province_id")
-//   districtName  String @map("district_name")
-//   districtId    Int    @map("district_id")
-//   wardName      String @map("ward_name")
-//   wardCode      String @map("ward_code")
-//   detailAddress String @map("detail_address")
+  // address
+  provinceName  String @map("province_name")
+  provinceId    Int    @map("province_id")
+  districtName  String @map("district_name")
+  districtId    Int    @map("district_id")
+  wardName      String @map("ward_name")
+  wardCode      String @map("ward_code")
+  detailAddress String @map("detail_address")
 
-//   createdAt DateTime @default(now()) @map("created_at")
-//   updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-//   logo UploadedImage @relation(fields: [logoId], references: [id], onDelete: Cascade)
+  logo UploadedImage @relation(fields: [logoId], references: [id], onDelete: Cascade)
 
-//   @@map("shop_infos")
-// }
+  @@map("shop_infos")
+}
 
 model RatingRecommendation {
   id        Int   @id @default(autoincrement()) @map("rating_recommendation_id")
