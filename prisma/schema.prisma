@@ -476,23 +476,15 @@ model Banner {
 }
 
 model ShopInfo {
-  id                 Int     @id @default(autoincrement()) @map("shop_info_id")
-  name               String
-  logoId             Int     @map("logo_id")
-  phone              String
-  email              String
-  workingTime        String  @map("working_time")
-  isMaintaining      Boolean @default(false) @map("is_maintaining")
-  maintainingMessage String? @map("maintaining_message")
-  slogan             String?
+  id          Int     @id @default(autoincrement()) @map("shop_info_id")
+  name        String
+  logoId      Int     @map("logo_id")
+  phone       String
+  email       String
+  workingTime String  @map("working_time")
+  slogan      String?
 
   // address
-  provinceName  String @map("province_name")
-  provinceId    Int    @map("province_id")
-  districtName  String @map("district_name")
-  districtId    Int    @map("district_id")
-  wardName      String @map("ward_name")
-  wardCode      String @map("ward_code")
   detailAddress String @map("detail_address")
 
   createdAt DateTime @default(now()) @map("created_at")

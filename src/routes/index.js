@@ -15,5 +15,6 @@ router.use("/article", require("./article"));
 router.use("/review", require("./review"));
 router.use("/policy", require("./policy"));
 router.use("/banner", require("./banner"));
+router.use("/shopInfo", require("./shopInfo"));
 
 module.exports = router;
