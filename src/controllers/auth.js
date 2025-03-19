@@ -22,6 +22,20 @@ class AuthController {
       metadata: await AccountService.getOne(req.account.id),
     }).send(res);
   }
+
+  static async loginWithGoogle(req, res) {
+    new OKResponse({
+      message: "Login with google successfully",
+      metadata: await AuthService.loginWithGoogle(req.body),
+    }).send(res);
+  }
+
+  static async adminLogin(req, res) {
+    new OKResponse({
+      message: "Login successfully",
+      metadata: await AuthService.adminLogin(req.body),
+    }).send(res);
+  }
 }
 
 module.exports = AuthController;

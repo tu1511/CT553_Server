@@ -35,5 +35,19 @@ router.post(
   validate,
   asyncHandler(AuthController.login)
 );
+router.post("/loginWithGoogle", asyncHandler(AuthController.loginWithGoogle));
+
+router.post(
+  "/adminLogin",
+  body("email", "Invalid email!").isEmail(),
+  body("password").notEmpty().trim().withMessage("Password is missing!"),
+  validate,
+  asyncHandler(AuthController.adminLogin)
+);
+
+router.post(
+  "/adminLoginWithGoogle",
+  asyncHandler(AuthController.adminLoginWithGoogle)
+);
 
 module.exports = router;
