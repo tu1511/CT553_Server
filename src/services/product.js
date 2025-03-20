@@ -478,7 +478,7 @@ class ProductService {
     products = products.map((product) => {
       const variants = product.variants.map((variant) => {
         const price = variant.priceHistory[variant.priceHistory.length - 1];
-        return { ...variant, price: price.price };
+        return { ...variant, price: price?.price };
       }); // get last price
       return { ...product, variants };
     });
