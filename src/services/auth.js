@@ -120,9 +120,9 @@ class AuthService {
     const account = await prisma.account.findUnique({
       where: {
         email,
-        roleId: {
-          in: [1, 2],
-        },
+        // roleId: {
+        //   in: [1, 2],
+        // },
       },
       include: {
         role: {
@@ -131,11 +131,17 @@ class AuthService {
       },
     });
 
-    if (!account) throw new BadRequest("Invalid credentials");
+    console.log("account", account);
+
+    if (!account) throw new BadRequest("Invalid credentials 1");
+
+    if (![1, 2].includes(account.roleId)) {
+      throw new BadRequest("Not permission to access this account");
+    }
 
     const matchedPassword = await bcrypt.compare(password, account.password);
 
-    if (!matchedPassword) throw new BadRequest("Invalid credentials");
+    if (!matchedPassword) throw new BadRequest("Invalid credentials 2");
 
     // check if account is blocked
     if (!account.active) throw new BadRequest("Account is blocked");

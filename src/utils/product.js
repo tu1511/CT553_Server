@@ -73,9 +73,9 @@ const commonIncludeOptionsInProductAdmin = {
     },
   },
   productDiscount: true,
-  // reviews: {
-  //   include: commonIncludeOptionsInReview,
-  // },
+  reviews: {
+    include: commonIncludeOptionsInReview,
+  },
 };
 
 const getQueryObjectBasedOnFilters = async (currentQueryObject, filters) => {

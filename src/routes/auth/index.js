@@ -45,9 +45,4 @@ router.post(
   asyncHandler(AuthController.adminLogin)
 );
 
-router.post(
-  "/adminLoginWithGoogle",
-  asyncHandler(AuthController.adminLoginWithGoogle)
-);
-
 module.exports = router;
