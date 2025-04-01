@@ -185,6 +185,27 @@ class ReviewService {
     return top3NewestReviews;
   }
 
+  // get unsend reviews for client
+  static async getUnsendReviews() {
+    let query = {
+      where: {
+        visible: true,
+        replyToReviewId: null,
+        replyByReview: {
+          none: {}, // Kiểm tra nếu không có phản hồi nào
+        },
+      },
+      include: commonIncludeOptionsInReview,
+      orderBy: {
+        createdAt: "desc",
+      },
+    };
+
+    let reviews = await prisma.review.findMany({ ...query });
+
+    return reviews;
+  }
+
   // for client
   static async getAllReviewsOfProduct(productId) {
     let query = {

@@ -76,6 +76,12 @@ class ReviewController {
     }).send(res);
   }
 
+  static async getUnsendReviews(req, res) {
+    new OKResponse({
+      metadata: await ReviewService.getUnsendReviews(),
+    }).send(res);
+  }
+
   static async getAllReviewsOfProduct(req, res) {
     new OKResponse({
       metadata: await ReviewService.getAllReviewsOfProduct(

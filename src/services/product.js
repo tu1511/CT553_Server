@@ -141,7 +141,7 @@ class ProductService {
     });
 
     // create embeddings
-    // await ProductService.createEmbeddingsForProduct(newProduct.id);
+    await ProductService.createEmbeddingsForProduct(newProduct.id);
 
     return newProduct;
   }

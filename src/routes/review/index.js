@@ -22,6 +22,12 @@ const router = express.Router();
 // get top 3 newest reviews and highest rating reviews of all products
 router.get("/top", validate, asyncHandler(ReviewController.getTopReviews));
 
+router.get(
+  "/unsend",
+  validate,
+  asyncHandler(ReviewController.getUnsendReviews)
+);
+
 // get all reviews of a product
 router.get(
   "/:productId",
