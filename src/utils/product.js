@@ -91,7 +91,7 @@ const getQueryObjectBasedOnFilters = async (currentQueryObject, filters) => {
   } = filters;
   const queryObject = { ...currentQueryObject };
 
-  if (categoryIds.length > 0) {
+  if (categoryIds?.length > 0) {
     const res = await Promise.all(
       categoryIds.map((categoryId) =>
         CategoryService.getCategoriesRecursivelyFromParent(+categoryId)

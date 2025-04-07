@@ -46,6 +46,15 @@ class OrderController {
     }).send(res);
   }
 
+  static async getAwaitingConfirm(req, res) {
+    new OKResponse({
+      metadata: await OrderService.getAwaitingConfirm({
+        page: +req.query.page || 1,
+        limit: +req.query.limit,
+      }),
+    }).send(res);
+  }
+
   static async cancel(req, res) {
     new OKResponse({
       metadata: await OrderService.cancel(+req.params.orderId),

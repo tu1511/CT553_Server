@@ -17,5 +17,6 @@ router.use("/policy", require("./policy"));
 router.use("/banner", require("./banner"));
 router.use("/shopInfo", require("./shopInfo"));
 router.use("/payments", require("./payment"));
+router.use("send-email", require("./sendEmail"));
 
 module.exports = router;

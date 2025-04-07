@@ -387,6 +387,9 @@ class ProductService {
     let query = {
       include: commonIncludeOptionsInProduct,
       take: limit,
+      where: {
+        visible: true,
+      },
     };
 
     query = await getQueryObjectBasedOnFilters(query, {
@@ -494,6 +497,61 @@ class ProductService {
     });
 
     query;
+    return {
+      products,
+      pagination: {
+        totalProducts: count,
+        totalPages,
+      },
+    };
+  }
+
+  static async getAllAdmin({
+    type,
+    limit,
+
+    page,
+    visible,
+  }) {
+    let query = {
+      include: commonIncludeOptionsInProduct,
+      take: limit,
+    };
+
+    query = await getQueryObjectBasedOnFilters(query, {
+      type,
+      visible,
+    });
+
+    const count = await prisma.product.count({
+      where: query.where,
+    });
+
+    const offset = page > 1 ? (page - 1) * limit : 0;
+    const totalPages = Math.ceil(count / limit);
+
+    let products = await prisma.product.findMany({ ...query, skip: offset });
+    query;
+
+    products = products.map((product) => {
+      const variants = product.variants.map((variant) => {
+        const price = variant.priceHistory[variant.priceHistory.length - 1];
+        return { ...variant, price: price?.price };
+      }); // get last price
+      return { ...product, variants };
+    });
+
+    // sort by price
+    products = products.map((product) => {
+      let sortedVariants = product.variants.sort((a, b) => a.price - b.price);
+      // calculate sum of quantity of variants
+      let totalQuantity = sortedVariants.reduce(
+        (acc, variant) => acc + variant.quantity,
+        0
+      );
+      return { ...product, variants: sortedVariants, totalQuantity };
+    });
+
     return {
       products,
       pagination: {

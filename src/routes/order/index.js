@@ -13,13 +13,18 @@ const { ORDER_STATUS_ID_MAPPING } = require("../../constant/orderStatus");
 const express = require("express");
 const router = express.Router();
 
-router.use(authentication);
+// router.use(authentication);
 
 router.get("/all", asyncHandler(OrderController.getAll));
 router.get("/allForReport", asyncHandler(OrderController.getAllForReport));
 router.get("/status-all", asyncHandler(OrderController.getAllOrderStatus));
 
-// router.use(authentication);
+router.get(
+  "/awaiting-confirm",
+  asyncHandler(OrderController.getAwaitingConfirm)
+);
+
+router.use(authentication);
 
 router.get("/:orderId", asyncHandler(OrderController.getById));
 router.get("/customer/:orderId", asyncHandler(OrderController.customerGetById));

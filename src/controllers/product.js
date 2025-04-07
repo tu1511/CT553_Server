@@ -29,6 +29,21 @@ class ProductController {
     }).send(res);
   }
 
+  static async getAllAdmin(req, res) {
+    new OKResponse({
+      metadata: await ProductService.getAllAdmin({
+        // productSearch: req.query.productSearch,
+        type: req.query?.type || PRODUCT_ALL,
+        // categoryIds: req.query?.categoryIds || [],
+        limit: +req.query?.limit || 10,
+        productIds: req.query?.productIds || [],
+        page: +req.query?.page || 1,
+        // visible: req.query.visible,
+        // sortBy: req.query.sortBy,
+      }),
+    }).send(res);
+  }
+
   static async getOne(req, res) {
     new OKResponse({
       metadata: await ProductService.getOne(+req.params.id),

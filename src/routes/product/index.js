@@ -44,6 +44,7 @@ router.get(
   validate,
   asyncHandler(ProductController.getAll)
 );
+router.get("/admin", validate, asyncHandler(ProductController.getAllAdmin));
 
 router.get(
   "/getAllTextEmbeddings",

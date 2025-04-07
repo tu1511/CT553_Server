@@ -4,6 +4,7 @@ const { PAYMENT_STATUS_ID_MAPPING } = require("../constant/paymentStatus");
 const { PAYMENT_METHOD_ID_MAPPING } = require("../constant/paymentMethod");
 const { BadRequest } = require("../response/error");
 const { eachDayOfInterval, subDays, eachMonthOfInterval } = require("date-fns");
+const SendEmailService = require("./sendEmail");
 // const SendEmailService = require("./sendEmail");
 
 const commonIncludeOptionsInOrder = {
@@ -330,6 +331,22 @@ class OrderService {
         totalPages,
       },
     };
+  }
+
+  static async getAwaitingConfirm() {
+    let query = {
+      where: {
+        currentStatusId: ORDER_STATUS_ID_MAPPING.AWAITING_CONFIRM,
+      },
+      include: commonIncludeOptionsInOrder,
+      orderBy: {
+        createdAt: "desc",
+      },
+    };
+
+    let orders = await prisma.order.findMany({ ...query });
+
+    return orders;
   }
 
   static async getAllForReport({ beginDate, endDate }) {
